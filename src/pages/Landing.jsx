@@ -44,7 +44,7 @@ export default function LandingPage() {
             <div className="text-white max-w-2xl">
               <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-1.5 mb-6 border border-white/20">
                 <MapPin className="h-4 w-4 text-emerald-400" />
-                <span className="text-sm font-medium">Hiring strictly in Hyderabad</span>
+                <span className="text-sm font-medium">Hiring strictly in AP & Telangana</span>
               </div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
