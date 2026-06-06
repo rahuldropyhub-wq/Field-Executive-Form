@@ -95,6 +95,22 @@ app.get("/api/candidates", async (req, res) => {
   }
 });
 
+// Secure Admin Login Endpoint
+app.post("/api/admin/login", (req, res) => {
+  const { email, password } = req.body;
+  
+  // These should ideally be in .env, but hardcoded here for the immediate requirement while keeping them off the frontend bundle
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "Rahuldropyhub@gmail.com";
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Rahullucky@1456";
+
+  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    // Return a simple mock token. For a real app, use JWT.
+    res.status(200).json({ token: "secure_admin_token_12345" });
+  } else {
+    res.status(401).json({ error: "Invalid admin credentials" });
+  }
+});
+
 // Export the Express API for Vercel
 export default app;
 
