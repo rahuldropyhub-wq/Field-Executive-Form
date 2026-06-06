@@ -39,6 +39,11 @@ const initDB = async () => {
       );
     `;
     await pool.query(query);
+    
+    // Safely add new columns for state and district 
+    await pool.query("ALTER TABLE candidates ADD COLUMN IF NOT EXISTS state TEXT;");
+    await pool.query("ALTER TABLE candidates ADD COLUMN IF NOT EXISTS district TEXT;");
+    
     console.log("Database initialized successfully.");
   } catch (err) {
     console.error("Error initializing database:", err);
@@ -52,23 +57,23 @@ app.post("/api/candidates", async (req, res) => {
   try {
     const { 
       full_name, email, mobile_number, qualification, 
-      date_of_birth, work_location, notice_period, 
+      date_of_birth, state, district, notice_period, 
       latitude, longitude, location_address 
     } = req.body;
 
     const insertQuery = `
       INSERT INTO candidates (
         full_name, email, mobile_number, qualification, 
-        date_of_birth, work_location, notice_period, 
+        date_of_birth, state, district, work_location, notice_period, 
         latitude, longitude, location_address
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
       RETURNING *;
     `;
     
     const values = [
       full_name, email, mobile_number, qualification, 
-      date_of_birth, work_location, notice_period, 
+      date_of_birth, state, district, `${district}, ${state}`, notice_period, 
       latitude, longitude, location_address
     ];
 
