@@ -34,9 +34,7 @@ const qualifications = [
 
 const statesList = Object.keys(statesAndDistricts)
 
-const noticePeriods = [
-  "Immediate Joiner", "7 Days", "15 Days", "30 Days", "45 Days", "60 Days", "90 Days"
-]
+
 
 const formSchema = z.object({
   full_name: z.string().min(3, { message: "Name must be at least 3 characters." }),
@@ -46,7 +44,7 @@ const formSchema = z.object({
   date_of_birth: z.date({ required_error: "A date of birth is required." }),
   state: z.string().min(1, { message: "Please select a state." }),
   district: z.string().min(1, { message: "Please select a district." }),
-  notice_period: z.string().min(1, { message: "Please select a notice period." }),
+
 })
 
 export default function RegistrationForm() {
@@ -67,7 +65,7 @@ export default function RegistrationForm() {
       qualification: "",
       state: "",
       district: "",
-      notice_period: "",
+
     },
   })
 
@@ -129,7 +127,7 @@ export default function RegistrationForm() {
         date_of_birth: values.date_of_birth.toISOString().split("T")[0],
         state: values.state,
         district: values.district,
-        notice_period: values.notice_period,
+
         latitude: coords?.latitude || null,
         longitude: coords?.longitude || null,
         location_address: locationAddress || null,
@@ -370,33 +368,7 @@ export default function RegistrationForm() {
                 />
               </div>
 
-              <FormField
-                control={form.control}
-                name="notice_period"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-slate-700 font-medium">Notice Period</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                            <Clock className="h-4 w-4 text-slate-400" />
-                          </div>
-                          <SelectTrigger className="pl-10 h-12 bg-white border-slate-200 hover:border-primary/50 transition-colors rounded-xl">
-                            <SelectValue placeholder="Select notice period" />
-                          </SelectTrigger>
-                        </div>
-                      </FormControl>
-                      <SelectContent className="rounded-xl">
-                        {noticePeriods.map(n => (
-                          <SelectItem key={n} value={n} className="rounded-lg">{n}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
 
               <div className="space-y-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
                 <div className="flex items-center justify-between">

@@ -57,7 +57,7 @@ app.post("/api/candidates", async (req, res) => {
   try {
     const { 
       full_name, email, mobile_number, qualification, 
-      date_of_birth, state, district, notice_period, 
+      date_of_birth, state, district, 
       latitude, longitude, location_address 
     } = req.body;
 
@@ -73,7 +73,7 @@ app.post("/api/candidates", async (req, res) => {
     
     const values = [
       full_name, email, mobile_number, qualification, 
-      date_of_birth, state, district, `${district}, ${state}`, notice_period, 
+      date_of_birth, state, district, `${district}, ${state}`, 'N/A', 
       latitude, longitude, location_address
     ];
 

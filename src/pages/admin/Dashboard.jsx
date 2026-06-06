@@ -82,7 +82,7 @@ export default function Dashboard() {
       "Date of Birth": c.date_of_birth,
       "State": c.state || c.work_location || "N/A",
       "District": c.district || "N/A",
-      "Notice Period": c.notice_period,
+
       "GPS Latitude": c.latitude || "N/A",
       "GPS Longitude": c.longitude || "N/A",
       "Exact Address (Auto)": c.location_address || "N/A",
@@ -137,7 +137,7 @@ export default function Dashboard() {
       doc.setTextColor(100, 100, 100);
       doc.text(`Generated on: ${dateStr}`, 14, 38);
 
-      const tableColumn = ["Full Name", "Email", "Mobile", "Qualification", "DOB", "State", "District", "Notice Period", "Captured Location", "Date Applied"];
+      const tableColumn = ["Full Name", "Email", "Mobile", "Qualification", "DOB", "State", "District", "Captured Location", "Date Applied"];
       const tableRows = [];
 
       filteredCandidates.forEach(c => {
@@ -149,7 +149,7 @@ export default function Dashboard() {
           new Date(c.date_of_birth).toLocaleDateString(),
           c.state || c.work_location || "N/A",
           c.district || "N/A",
-          c.notice_period,
+
           c.location_address || "N/A",
           new Date(c.created_at).toLocaleDateString()
         ]);
@@ -303,7 +303,7 @@ export default function Dashboard() {
                   <th className="px-6 py-4 whitespace-nowrap">Date of Birth</th>
                   <th className="px-6 py-4 whitespace-nowrap">State</th>
                   <th className="px-6 py-4 whitespace-nowrap">District</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Notice Period</th>
+
                   <th className="px-6 py-4 whitespace-nowrap">Captured Location</th>
                   <th className="px-6 py-4 whitespace-nowrap">Date Applied</th>
                 </tr>
@@ -339,9 +339,7 @@ export default function Dashboard() {
                       <td className="px-6 py-4 whitespace-nowrap text-slate-600">
                         {candidate.district || "N/A"}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-600">
-                        {candidate.notice_period}
-                      </td>
+
                       <td className="px-6 py-4 min-w-[250px]">
                         {candidate.location_address ? (
                           <div className="flex items-start text-slate-600">
@@ -406,8 +404,8 @@ export default function Dashboard() {
                     <div className="flex items-start text-slate-600">
                       <Briefcase className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
                       <div>
-                        <p className="text-xs text-slate-400 font-medium">Location & Notice</p>
-                        <p className="text-slate-700">{candidate.district ? `${candidate.district}, ${candidate.state}` : candidate.work_location} ({candidate.notice_period})</p>
+                        <p className="text-xs text-slate-400 font-medium">Location</p>
+                        <p className="text-slate-700">{candidate.district ? `${candidate.district}, ${candidate.state}` : candidate.work_location}</p>
                       </div>
                     </div>
                     <div className="flex items-start text-slate-600 bg-slate-50 p-3 rounded-xl mt-2 border border-slate-100">
