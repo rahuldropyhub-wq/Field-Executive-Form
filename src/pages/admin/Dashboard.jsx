@@ -20,7 +20,7 @@ export default function Dashboard() {
     // Basic auth check using localStorage
     const isAuthenticated = localStorage.getItem("admin_authenticated") === "true";
     if (!isAuthenticated) {
-      navigate("/admin/login");
+      navigate("/secure-portal/login");
       return;
     }
 
@@ -66,7 +66,7 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem("admin_authenticated");
-    navigate("/admin/login");
+    navigate("/secure-portal/login");
   };
 
   const exportToExcel = () => {

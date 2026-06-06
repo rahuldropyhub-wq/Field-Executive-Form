@@ -20,9 +20,9 @@ function App() {
         <Route path="/qrcode" element={<QRCodeGenerator />} />
 
         {/* Admin Routes */}
-        <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/secure-portal" element={<Navigate to="/secure-portal/login" replace />} />
+        <Route path="/secure-portal/login" element={<AdminLogin />} />
+        <Route path="/secure-portal/dashboard" element={<Dashboard />} />
         
         {/* Catch all */}
         <Route path="*" element={<Navigate to="/" replace />} />

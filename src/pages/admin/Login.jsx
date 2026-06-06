@@ -24,7 +24,7 @@ export default function AdminLogin() {
       
       if (result.token) {
         localStorage.setItem("admin_authenticated", "true")
-        navigate("/admin/dashboard")
+        navigate("/secure-portal/dashboard")
       }
     } catch (error) {
       toast({
