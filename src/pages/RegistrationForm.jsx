@@ -278,41 +278,29 @@ export default function RegistrationForm() {
                 control={form.control}
                 name="date_of_birth"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel className="text-slate-700 font-medium mb-1">Date of Birth</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-10 text-left font-normal h-12 bg-white border-slate-200 hover:bg-slate-50 hover:border-primary/50 transition-colors rounded-xl relative",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                              <CalendarIcon className="h-4 w-4 text-slate-400" />
-                            </div>
-                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0 rounded-xl" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                          captionLayout="dropdown-buttons"
-                          fromYear={1950}
-                          toYear={new Date().getFullYear()}
-                          className="rounded-xl p-3 pointer-events-auto"
+                  <FormItem>
+                    <FormLabel className="text-slate-700 font-medium">Date of Birth</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <CalendarIcon className="h-4 w-4 text-slate-400" />
+                        </div>
+                        <Input 
+                          type="date" 
+                          max={new Date().toISOString().split("T")[0]}
+                          {...field}
+                          value={field.value ? (field.value instanceof Date ? field.value.toISOString().split("T")[0] : field.value) : ""}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                                field.onChange(new Date(e.target.value));
+                            } else {
+                                field.onChange(undefined);
+                            }
+                          }}
+                          className="pl-10 h-12 bg-white border-slate-200 hover:border-primary/50 transition-colors rounded-xl font-medium text-slate-700" 
                         />
-                      </PopoverContent>
-                    </Popover>
+                      </div>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
