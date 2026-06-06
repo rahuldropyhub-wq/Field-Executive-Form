@@ -228,7 +228,17 @@ export default function RegistrationForm() {
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <Phone className="h-4 w-4 text-slate-400" />
                         </div>
-                        <Input placeholder="9876543210" type="tel" {...field} className="pl-10 h-12 bg-white border-slate-200 hover:border-primary/50 transition-colors rounded-xl" />
+                        <Input 
+                          placeholder="9876543210" 
+                          type="tel" 
+                          {...field}
+                          maxLength={10}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                            field.onChange(value);
+                          }}
+                          className="pl-10 h-12 bg-white border-slate-200 hover:border-primary/50 transition-colors rounded-xl" 
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -296,7 +306,10 @@ export default function RegistrationForm() {
                             date > new Date() || date < new Date("1900-01-01")
                           }
                           initialFocus
-                          className="rounded-xl"
+                          captionLayout="dropdown-buttons"
+                          fromYear={1950}
+                          toYear={new Date().getFullYear()}
+                          className="rounded-xl p-3 pointer-events-auto"
                         />
                       </PopoverContent>
                     </Popover>
