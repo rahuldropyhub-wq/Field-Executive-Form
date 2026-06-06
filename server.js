@@ -87,6 +87,10 @@ app.post("/api/candidates", async (req, res) => {
 // API endpoint to fetch all candidates (for admin panel)
 app.get("/api/candidates", async (req, res) => {
   try {
+    // Automatically delete candidates older than 2 months
+    await pool.query("DELETE FROM candidates WHERE created_at < NOW() - INTERVAL '2 months';");
+
+    // Fetch the remaining data
     const { rows } = await pool.query("SELECT * FROM candidates ORDER BY created_at DESC;");
     res.status(200).json(rows);
   } catch (error) {
