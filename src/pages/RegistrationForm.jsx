@@ -56,6 +56,7 @@ export default function RegistrationForm() {
   const [isLocating, setIsLocating] = useState(false)
   const [locationError, setLocationError] = useState(null)
   const [coords, setCoords] = useState(null)
+  const [locationAddress, setLocationAddress] = useState(null)
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -80,11 +81,29 @@ export default function RegistrationForm() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setCoords({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        })
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        setCoords({ latitude: lat, longitude: lng });
+        
+        try {
+          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+          const data = await response.json();
+          if (data && data.address) {
+            const { city, state_district, state, town, village, county } = data.address;
+            const locality = city || town || village || county || "Unknown City";
+            const dist = state_district || "";
+            const st = state || "";
+            
+            const addressParts = [locality, dist, st].filter(Boolean);
+            setLocationAddress(addressParts.join(", "));
+          } else {
+            setLocationAddress("Location found (Address unknown)");
+          }
+        } catch (err) {
+          setLocationAddress("Location found (Address unknown)");
+        }
+        
         setIsLocating(false)
       },
       (error) => {
@@ -107,6 +126,7 @@ export default function RegistrationForm() {
         notice_period: values.notice_period,
         latitude: coords?.latitude || null,
         longitude: coords?.longitude || null,
+        location_address: locationAddress || null,
       })
       
       toast({
@@ -134,9 +154,16 @@ export default function RegistrationForm() {
       </div>
 
       <div className="w-full max-w-md bg-white/80 backdrop-blur-sm rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 overflow-hidden z-10 relative">
-        <div className="pt-10 pb-6 flex flex-col items-center px-8">
-          <div className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 mb-6 w-20 h-20 flex items-center justify-center">
-            <img src="/phonepe-logo.svg" alt="PhonePe Logo" className="h-10 w-10 object-contain" />
+        <div className="pt-8 pb-4 flex flex-col items-center px-8 relative">
+          <button 
+            onClick={() => navigate("/")}
+            className="absolute top-6 left-6 text-slate-400 hover:text-slate-600 transition-colors p-2 rounded-full hover:bg-slate-100"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          
+          <div className="bg-white px-6 py-4 rounded-2xl shadow-sm border border-slate-100 mb-6 flex items-center justify-center">
+            <img src="/phonepe-logo.svg" alt="PhonePe Logo" className="h-10 sm:h-12 w-auto object-contain" />
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 text-center">Join PhonePe</h2>
           <p className="mt-2 text-slate-500 text-sm text-center">Register for the Field Executive role and become part of our growing team.</p>
@@ -331,7 +358,7 @@ export default function RegistrationForm() {
               <div className="space-y-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-slate-700 font-medium">Current Location</FormLabel>
+                    <label className="text-sm text-slate-700 font-medium">Current Location</label>
                     <p className="text-xs text-slate-500">Capture your exact GPS location</p>
                   </div>
                   <Button 
@@ -358,9 +385,16 @@ export default function RegistrationForm() {
                   </p>
                 )}
                 {coords && (
-                  <p className="text-xs font-medium text-emerald-600 flex items-center">
-                    Lat: {coords.latitude.toFixed(4)}, Lng: {coords.longitude.toFixed(4)}
-                  </p>
+                  <div className="text-xs font-medium text-emerald-600 flex flex-col gap-1">
+                    <div className="flex items-center">
+                      Lat: {coords.latitude.toFixed(4)}, Lng: {coords.longitude.toFixed(4)}
+                    </div>
+                    {locationAddress && (
+                      <div className="text-slate-600 font-normal">
+                        {locationAddress}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
 

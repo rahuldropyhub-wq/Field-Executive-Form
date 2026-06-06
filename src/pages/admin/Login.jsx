@@ -19,21 +19,12 @@ export default function AdminLogin() {
     setIsLoading(true)
 
     try {
-      if (supabase) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-        if (error) throw error
+      // Mock authentication for the assignment
+      if (email === "admin@example.com" && password === "password") {
+        localStorage.setItem("admin_authenticated", "true")
         navigate("/admin/dashboard")
       } else {
-        // Mock authentication
-        if (email === "admin@example.com" && password === "password") {
-          localStorage.setItem("mock_auth", "true")
-          navigate("/admin/dashboard")
-        } else {
-          throw new Error("Invalid credentials")
-        }
+        throw new Error("Invalid credentials")
       }
     } catch (error) {
       toast({
@@ -52,11 +43,9 @@ export default function AdminLogin() {
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-slate-900">Admin Portal</h1>
           <p className="text-slate-500 mt-2">Sign in to manage candidate registrations</p>
-          {!supabase && (
-            <p className="text-xs text-amber-600 mt-4 bg-amber-50 p-2 rounded">
-              Mock Mode Active: Use <strong>admin@example.com</strong> / <strong>password</strong>
-            </p>
-          )}
+          <p className="text-xs text-amber-600 mt-4 bg-amber-50 p-2 rounded">
+            Mock Mode Active: Use <strong>admin@example.com</strong> / <strong>password</strong>
+          </p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
