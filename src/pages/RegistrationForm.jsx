@@ -26,14 +26,13 @@ import { Calendar } from "@/components/ui/calendar"
 import { useToast } from "@/hooks/use-toast"
 import { submitApplication } from "@/lib/api"
 import { cn } from "@/lib/utils"
+import { statesAndDistricts } from "@/lib/statesAndDistricts"
 
 const qualifications = [
   "SSC", "Intermediate", "Diploma", "Degree", "B.Tech", "M.Tech", "MBA", "MCA", "BCA", "ITI", "Other"
 ]
 
-const locations = [
-  "Bangalore", "Hyderabad", "Chennai", "Pune", "Mumbai", "Delhi", "No Preference"
-]
+const statesList = Object.keys(statesAndDistricts)
 
 const noticePeriods = [
   "Immediate Joiner", "7 Days", "15 Days", "30 Days", "45 Days", "60 Days", "90 Days"
@@ -45,7 +44,8 @@ const formSchema = z.object({
   mobile_number: z.string().regex(/^[6-9]\d{9}$/, { message: "Invalid Indian mobile number." }),
   qualification: z.string().min(1, { message: "Please select a qualification." }),
   date_of_birth: z.date({ required_error: "A date of birth is required." }),
-  work_location: z.string().min(1, { message: "Please select a work location." }),
+  state: z.string().min(1, { message: "Please select a state." }),
+  district: z.string().min(1, { message: "Please select a district." }),
   notice_period: z.string().min(1, { message: "Please select a notice period." }),
 })
 
@@ -65,10 +65,15 @@ export default function RegistrationForm() {
       email: "",
       mobile_number: "",
       qualification: "",
-      work_location: "",
+      state: "",
+      district: "",
       notice_period: "",
     },
   })
+
+  // Watch state to update district options
+  const selectedState = form.watch("state")
+  const districtOptions = selectedState ? statesAndDistricts[selectedState] || [] : []
 
   const getLocation = () => {
     setIsLocating(true)
@@ -122,7 +127,7 @@ export default function RegistrationForm() {
         mobile_number: values.mobile_number,
         qualification: values.qualification,
         date_of_birth: values.date_of_birth.toISOString().split("T")[0],
-        work_location: values.work_location,
+        work_location: `${values.district}, ${values.state}`,
         notice_period: values.notice_period,
         latitude: coords?.latitude || null,
         longitude: coords?.longitude || null,
@@ -299,33 +304,69 @@ export default function RegistrationForm() {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="work_location"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-slate-700 font-medium">Work Location</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                            <MapPin className="h-4 w-4 text-slate-400" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <FormField
+                  control={form.control}
+                  name="state"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-700 font-medium">Work State</FormLabel>
+                      <Select 
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          form.setValue("district", ""); // Reset district when state changes
+                        }} 
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                              <MapPin className="h-4 w-4 text-slate-400" />
+                            </div>
+                            <SelectTrigger className="pl-10 h-12 bg-white border-slate-200 hover:border-primary/50 transition-colors rounded-xl">
+                              <SelectValue placeholder="Select state" />
+                            </SelectTrigger>
                           </div>
-                          <SelectTrigger className="pl-10 h-12 bg-white border-slate-200 hover:border-primary/50 transition-colors rounded-xl">
-                            <SelectValue placeholder="Select preferred location" />
-                          </SelectTrigger>
-                        </div>
-                      </FormControl>
-                      <SelectContent className="rounded-xl">
-                        {locations.map(l => (
-                          <SelectItem key={l} value={l} className="rounded-lg">{l}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                        </FormControl>
+                        <SelectContent className="rounded-xl">
+                          {statesList.map(s => (
+                            <SelectItem key={s} value={s} className="rounded-lg">{s}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="district"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-700 font-medium">Work District</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value} disabled={!selectedState}>
+                        <FormControl>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                              <MapPin className="h-4 w-4 text-slate-400" />
+                            </div>
+                            <SelectTrigger className="pl-10 h-12 bg-white border-slate-200 hover:border-primary/50 transition-colors rounded-xl disabled:bg-slate-50 disabled:opacity-100">
+                              <SelectValue placeholder={selectedState ? "Select district" : "Select state first"} />
+                            </SelectTrigger>
+                          </div>
+                        </FormControl>
+                        <SelectContent className="rounded-xl max-h-[250px]">
+                          {districtOptions.map(d => (
+                            <SelectItem key={d} value={d} className="rounded-lg">{d}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
