@@ -52,10 +52,10 @@ export default function LandingPage() {
               
               <div className="space-y-4 mb-8">
                 <p className="text-lg text-primary-foreground/90 leading-relaxed font-light">
-                  We are looking for energetic and motivated Field Executives to help expand our user base and increase brand awareness. The primary responsibility of this role is to approach individuals in public places, explain the benefits of our platform, assist them in downloading and installing the mobile application, and help them complete the registration process.
+                  We are looking for energetic and motivated Field Executives to help <span className="font-semibold text-white">expand our user base</span> and <span className="font-semibold text-white">increase brand awareness</span>. The primary responsibility of this role is to <span className="font-semibold text-white">approach individuals in public places</span>, explain the benefits of our platform, assist them in <span className="font-semibold text-white">downloading and installing the mobile application</span>, and help them <span className="font-semibold text-white">complete the registration process</span>.
                 </p>
                 <p className="text-lg text-primary-foreground/90 leading-relaxed font-light">
-                  During the initial growth phase, the focus will be on user acquisition and registrations. As the platform grows, the role will also involve conducting brand awareness activities and supporting customer engagement initiatives.
+                  During the initial growth phase, the focus will be on <span className="font-semibold text-white">user acquisition and registrations</span>. As the platform grows, the role will also involve conducting <span className="font-semibold text-white">brand awareness activities</span> and supporting <span className="font-semibold text-white">customer engagement initiatives</span>.
                 </p>
               </div>
               
