@@ -1,7 +1,7 @@
 import React from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { Briefcase, MapPin, IndianRupee, Calendar, ArrowRight, CheckCircle2, ChevronRight, GraduationCap, Smartphone, Target, Users } from "lucide-react"
+import { Briefcase, MapPin, IndianRupee, Calendar, ArrowRight, CheckCircle2, ChevronRight, GraduationCap, Smartphone, Target, Users, FileText, Gift, Activity, Compass, UserCheck } from "lucide-react"
 
 export default function LandingPage() {
   const navigate = useNavigate()
@@ -11,7 +11,6 @@ export default function LandingPage() {
       
       {/* Hero Section */}
       <div className="relative bg-primary overflow-hidden">
-        {/* Background Patterns */}
         <div className="absolute inset-0 z-0 opacity-10">
           <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -44,16 +43,21 @@ export default function LandingPage() {
             <div className="text-white max-w-2xl">
               <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-1.5 mb-6 border border-white/20">
                 <MapPin className="h-4 w-4 text-emerald-400" />
-                <span className="text-sm font-medium">Hiring strictly in AP & Telangana</span>
+                <span className="text-sm font-medium">Telangana & AP selected district</span>
               </div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
-                Start Your Career with <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-200 to-white">PhonePe</span>
+                Start Your Career as a <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-200 to-white">Field Executive</span>
               </h1>
               
-              <p className="text-lg md:text-xl text-primary-foreground/80 mb-10 leading-relaxed font-light">
-                We are actively looking for dynamic Field Executives in Hyderabad. Whether you are a fresher starting out or an experienced sales professional, build your future with India's leading payments platform.
-              </p>
+              <div className="space-y-4 mb-8">
+                <p className="text-lg text-primary-foreground/90 leading-relaxed font-light">
+                  We are looking for energetic and motivated Field Executives to help expand our user base and increase brand awareness. The primary responsibility of this role is to approach individuals in public places, explain the benefits of our platform, assist them in downloading and installing the mobile application, and help them complete the registration process.
+                </p>
+                <p className="text-lg text-primary-foreground/90 leading-relaxed font-light">
+                  During the initial growth phase, the focus will be on user acquisition and registrations. As the platform grows, the role will also involve conducting brand awareness activities and supporting customer engagement initiatives.
+                </p>
+              </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
@@ -87,24 +91,24 @@ export default function LandingPage() {
                 <div className="space-y-4 mb-8">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-500 flex items-center"><MapPin className="h-4 w-4 mr-2" /> Location</span>
-                    <span className="font-semibold text-slate-900">Hyderabad</span>
+                    <span className="font-semibold text-slate-900">Telangana and AP selected district</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500 flex items-center"><IndianRupee className="h-4 w-4 mr-2" /> Salary</span>
-                    <span className="font-semibold text-emerald-600">₹17,000 – ₹23,000 / month</span>
+                    <span className="text-slate-500 flex items-center"><IndianRupee className="h-4 w-4 mr-2" /> Freshers</span>
+                    <span className="font-semibold text-emerald-600">17K - 20K / month</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-500 flex items-center"><IndianRupee className="h-4 w-4 mr-2" /> Experienced</span>
+                    <span className="font-semibold text-emerald-600">23K+ / month</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-500 flex items-center"><Calendar className="h-4 w-4 mr-2" /> Working Days</span>
-                    <span className="font-semibold text-slate-900">Monday to Saturday</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500 flex items-center"><GraduationCap className="h-4 w-4 mr-2" /> Eligibility</span>
-                    <span className="font-semibold text-slate-900">10th / Inter / Degree</span>
+                    <span className="font-semibold text-slate-900">6 Days / Week</span>
                   </div>
                 </div>
 
-                <div className="bg-amber-50 rounded-2xl p-4 border border-amber-100 text-sm text-amber-800">
-                  <span className="font-bold">Note for Experienced:</span> Prior field sales candidates must provide previous company pay slips and relevant documents.
+                <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10 text-sm text-slate-700 leading-relaxed">
+                  <span className="font-bold text-primary">Ideal Candidate:</span> A self-motivated and energetic individual who enjoys meeting new people, explaining products and services, helping users adopt digital platforms, and contributing to the company's growth through user acquisition and brand awareness activities.
                 </div>
               </div>
             </div>
@@ -112,96 +116,243 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Responsibilities Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 tracking-tight mb-4">Job Responsibilities</h2>
-          <p className="text-slate-500">What you will be doing day-to-day on the field.</p>
+        
+        {/* Key Responsibilities */}
+        <div className="mb-20">
+          <div className="flex items-center gap-3 mb-8">
+            <Target className="h-8 w-8 text-primary" />
+            <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Key Responsibilities</h2>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* User Acquisition */}
+            <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-[0_2px_15px_rgb(0,0,0,0.03)] hover:border-primary/20 transition-colors">
+              <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
+                <Users className="h-5 w-5 mr-3 text-emerald-500" />
+                User Acquisition
+              </h3>
+              <ul className="space-y-4">
+                {[
+                  "Identify and approach potential users in assigned locations.",
+                  "Explain the company's services, products, and benefits.",
+                  "Assist users in downloading and installing the mobile application.",
+                  "Help users complete account registration and profile setup.",
+                  "Educate users on how to use the application and its features.",
+                  "Encourage active usage of the platform."
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-500 mr-3 shrink-0 mt-0.5" />
+                    <span className="text-slate-600 text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Brand Awareness */}
+            <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-[0_2px_15px_rgb(0,0,0,0.03)] hover:border-primary/20 transition-colors">
+              <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
+                <Activity className="h-5 w-5 mr-3 text-purple-500" />
+                Brand Awareness Activities
+              </h3>
+              <ul className="space-y-4">
+                {[
+                  "Promote the company's brand and services in the assigned territory.",
+                  "Participate in marketing campaigns and awareness programs.",
+                  "Distribute promotional materials when required.",
+                  "Create awareness about the company among the public.",
+                  "Collect customer feedback and market insights."
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start">
+                    <CheckCircle2 className="h-5 w-5 text-purple-500 mr-3 shrink-0 mt-0.5" />
+                    <span className="text-slate-600 text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Field Operations */}
+            <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-[0_2px_15px_rgb(0,0,0,0.03)] hover:border-primary/20 transition-colors">
+              <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
+                <Compass className="h-5 w-5 mr-3 text-blue-500" />
+                Field Operations
+              </h3>
+              <ul className="space-y-4">
+                {[
+                  "Conduct daily field visits according to assigned plans.",
+                  "Maintain records of registrations, installations, and user interactions.",
+                  "Submit daily, weekly, and monthly activity reports.",
+                  "Mark attendance and activity updates through company-approved systems.",
+                  "Achieve assigned targets within specified timelines."
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start">
+                    <CheckCircle2 className="h-5 w-5 text-blue-500 mr-3 shrink-0 mt-0.5" />
+                    <span className="text-slate-600 text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-x-12 gap-y-6">
-          {[
-            "Promote PhonePe services and increase brand awareness in the assigned territory.",
-            "Visit shops and local businesses to onboard new merchants.",
-            "Open PhonePe accounts for shopkeepers and users.",
-            "Assist merchants and users with PhonePe app installation and setup.",
-            "Explain PhonePe features, benefits, and digital payment solutions.",
-            "Build and maintain strong relationships with shopkeepers and customers.",
-            "Achieve daily and monthly onboarding targets.",
-            "Submit regular activity and performance reports to the supervisor.",
-          ].map((item, i) => (
-            <div key={i} className="flex items-start bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
-              <div className="bg-primary/10 p-1.5 rounded-full mr-4 shrink-0 mt-0.5">
-                <CheckCircle2 className="h-5 w-5 text-primary" />
+        {/* 2 Column Section: Eligibility & Requirements vs Skills & KPIs */}
+        <div className="grid lg:grid-cols-2 gap-12 mb-20">
+          
+          {/* Left Column */}
+          <div className="space-y-12">
+            {/* Eligibility Criteria */}
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <GraduationCap className="h-7 w-7 text-primary" />
+                <h2 className="text-2xl font-bold text-slate-900">Eligibility Criteria</h2>
               </div>
-              <span className="text-slate-700 font-medium leading-relaxed">{item}</span>
+              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/60">
+                <ul className="space-y-4">
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Minimum Qualification:</b> 10th Pass.</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700">Must be able to read and understand basic English and/or the local language.</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700">Must know how to use a smartphone and mobile applications.</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700">Freshers and experienced candidates are welcome to apply.</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700">Field sales, marketing, or customer acquisition experience is an added advantage.</span></li>
+                </ul>
+              </div>
             </div>
-          ))}
+
+            {/* Requirements */}
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <FileText className="h-7 w-7 text-primary" />
+                <h2 className="text-2xl font-bold text-slate-900">Requirements</h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  "Android Smartphone (Mandatory)", 
+                  "Aadhaar Card", 
+                  "PAN Card", 
+                  "Bank Account Details", 
+                  "Passport Size Photograph", 
+                  "Any additional documents required by the company"
+                ].map((item, i) => (
+                  <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center shadow-sm">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-500 mr-3 shrink-0" />
+                    <span className="text-sm font-medium text-slate-700">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-12">
+            {/* Required Skills */}
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <UserCheck className="h-7 w-7 text-primary" />
+                <h2 className="text-2xl font-bold text-slate-900">Required Skills</h2>
+              </div>
+              <div className="bg-white rounded-2xl p-6 shadow-[0_2px_15px_rgb(0,0,0,0.03)] border border-slate-100">
+                <ul className="space-y-4">
+                  {[
+                    "Good communication and interpersonal skills.",
+                    "Ability to interact confidently with the public.",
+                    "Basic sales and persuasion skills.",
+                    "Positive attitude and willingness to learn.",
+                    "Ability to work independently and achieve targets.",
+                    "Basic smartphone and mobile application knowledge."
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-4 shrink-0"></div>
+                      <span className="text-slate-700">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Compensation & Benefits */}
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <Gift className="h-7 w-7 text-primary" />
+                <h2 className="text-2xl font-bold text-slate-900">Compensation & Benefits</h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  "Fixed Monthly Salary",
+                  "Attractive Performance-Based Incentives",
+                  "Career Growth Opportunities",
+                  "Training and Development Support",
+                  "Recognition and Performance Rewards"
+                ].map((item, i) => (
+                  <div key={i} className="bg-primary/5 rounded-xl p-4 border border-primary/10 flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0" />
+                    <span className="text-sm font-medium text-slate-800">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
         </div>
-      </div>
 
-      {/* Skills and Eligibility Section */}
-      <div className="bg-slate-100 border-y border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid lg:grid-cols-2 gap-16">
-            
-            {/* Eligibility */}
-            <div>
-               <h3 className="text-2xl font-bold text-slate-900 tracking-tight mb-8 flex items-center">
-                 <GraduationCap className="mr-3 h-7 w-7 text-primary"/> Eligibility Criteria
-               </h3>
-               <ul className="space-y-4">
-                 <li className="flex items-center text-slate-700 bg-white p-4 rounded-xl shadow-sm border border-slate-200/60">
-                   <span className="font-semibold w-full">Minimum qualification: 10th / Intermediate / Any Degree.</span>
-                 </li>
-                 <li className="flex items-center text-slate-700 bg-white p-4 rounded-xl shadow-sm border border-slate-200/60">
-                   <span className="font-semibold w-full">Freshers and experienced candidates can apply.</span>
-                 </li>
-                 <li className="flex items-center text-slate-700 bg-white p-4 rounded-xl shadow-sm border border-slate-200/60">
-                   <span className="font-semibold w-full">Ability to travel within the assigned area in Hyderabad.</span>
-                 </li>
-               </ul>
-            </div>
+        {/* KPIs & Working Conditions */}
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
+          <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full pointer-events-none"></div>
+            <h3 className="text-xl font-bold mb-6 flex items-center">
+              <Activity className="h-6 w-6 mr-3 text-purple-400" />
+              Key Performance Indicators (KPIs)
+            </h3>
+            <ul className="space-y-4">
+              {[
+                "Number of app installations completed.",
+                "Number of successful user registrations.",
+                "User activation rate.",
+                "Daily and monthly target achievement.",
+                "Brand awareness activities conducted.",
+                "Quality and accuracy of registrations."
+              ].map((item, i) => (
+                <li key={i} className="flex items-start">
+                  <ChevronRight className="h-5 w-5 text-purple-400 mr-2 shrink-0" />
+                  <span className="text-slate-300 text-sm leading-relaxed">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-            {/* Skills */}
-            <div>
-               <h3 className="text-2xl font-bold text-slate-900 tracking-tight mb-8 flex items-center">
-                 <Target className="mr-3 h-7 w-7 text-primary"/> Skills Required
-               </h3>
-               <div className="grid sm:grid-cols-2 gap-4">
-                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/60 flex flex-col items-center text-center">
-                   <Users className="h-8 w-8 text-emerald-600 mb-3" />
-                   <p className="font-medium text-slate-800">Communication & Interpersonal Skills</p>
-                 </div>
-                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/60 flex flex-col items-center text-center">
-                   <Briefcase className="h-8 w-8 text-blue-600 mb-3" />
-                   <p className="font-medium text-slate-800">Customer Handling & Relationship Building</p>
-                 </div>
-                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/60 flex flex-col items-center text-center">
-                   <Smartphone className="h-8 w-8 text-purple-600 mb-3" />
-                   <p className="font-medium text-slate-800">Basic Smartphone Knowledge</p>
-                 </div>
-                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200/60 flex flex-col items-center text-center">
-                   <Target className="h-8 w-8 text-red-500 mb-3" />
-                   <p className="font-medium text-slate-800">Target-Oriented Approach</p>
-                 </div>
-               </div>
-            </div>
-
+          <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
+            <h3 className="text-xl font-bold mb-6 flex items-center text-slate-900">
+              <Compass className="h-6 w-6 mr-3 text-emerald-500" />
+              Working Conditions
+            </h3>
+            <ul className="space-y-5">
+              {[
+                "Field-based role involving outdoor activities.",
+                "Regular travel within the assigned territory.",
+                "Direct interaction with customers and the general public.",
+                "Six working days per week."
+              ].map((item, i) => (
+                <li key={i} className="flex items-start">
+                  <div className="bg-emerald-100 p-1 rounded-full mr-4 shrink-0 mt-0.5">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  </div>
+                  <span className="text-slate-700 font-medium leading-relaxed">{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
       
       {/* Footer Call to Action */}
-      <div className="bg-white">
-        <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-             <h3 className="text-3xl font-bold text-slate-900 mb-6">Ready to Join Us?</h3>
-             <p className="text-slate-600 mb-10 text-lg">Your application takes less than a minute. Apply now to secure your interview slot.</p>
+      <div className="bg-primary border-t border-white/10 relative overflow-hidden">
+        <div className="absolute -top-[50%] -right-[10%] w-[50%] h-[150%] bg-white/5 rotate-12 pointer-events-none"></div>
+        <div className="max-w-4xl mx-auto px-4 py-24 text-center relative z-10">
+             <h3 className="text-4xl font-extrabold text-white mb-6">Ready to Join Us?</h3>
+             <p className="text-primary-foreground/80 mb-10 text-xl font-light">Your application takes less than a minute. Apply now to secure your interview slot.</p>
              
              <Button 
                 onClick={() => navigate("/register")} 
                 size="lg"
-                className="w-full sm:w-auto h-14 rounded-xl px-12 text-lg font-bold shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all"
+                className="w-full sm:w-auto h-14 rounded-xl px-12 text-lg font-bold bg-white text-primary shadow-xl shadow-black/20 hover:-translate-y-1 hover:bg-slate-50 transition-all"
               >
                 Apply for this Role <ChevronRight className="ml-2 h-5 w-5" />
               </Button>
