@@ -99,7 +99,7 @@ export default function LandingPage() {
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-500 flex items-center"><IndianRupee className="h-4 w-4 mr-2" /> Experienced</span>
-                    <span className="font-semibold text-emerald-600">23K+ / month</span>
+                    <span className="font-semibold text-emerald-600">20K - 25K / month</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-500 flex items-center"><Calendar className="h-4 w-4 mr-2" /> Working Days</span>
@@ -208,6 +208,8 @@ export default function LandingPage() {
               </div>
               <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/60">
                 <ul className="space-y-4">
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Age:</b> 18 - 27 Years.</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Gender:</b> Only for Male candidates.</span></li>
                   <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Minimum Qualification:</b> 10th Pass.</span></li>
                   <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700">Must be able to read and understand basic English and/or the local language.</span></li>
                   <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700">Must know how to use a smartphone and mobile applications.</span></li>

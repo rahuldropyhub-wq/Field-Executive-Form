@@ -55,8 +55,8 @@ export default function AdminLogin() {
         <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-purple-900/40 blur-3xl pointer-events-none z-0"></div>
 
         <div className="relative z-10">
-          <div className="bg-white/10 backdrop-blur-sm inline-flex items-center justify-center p-4 rounded-2xl mb-12 border border-white/20">
-             <img src="/phonepe-logo.svg" alt="PhonePe Logo" className="h-8 w-auto brightness-0 invert" />
+          <div className="bg-white inline-flex items-center justify-center p-4 rounded-2xl mb-12 shadow-lg border border-slate-100">
+             <img src="/phonepe-logo.svg" alt="PhonePe Logo" className="h-8 w-auto" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
             Field Executive <br />
@@ -92,8 +92,8 @@ export default function AdminLogin() {
       {/* Right Side: Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 bg-white relative z-10 shadow-[-20px_0_40px_rgb(0,0,0,0.05)]">
         <div className="w-full max-w-md">
-          <div className="lg:hidden mb-8 flex justify-center">
-             <img src="/phonepe-logo.svg" alt="PhonePe Logo" className="h-10 w-auto" />
+          <div className="lg:hidden mb-8 flex justify-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mx-auto w-fit">
+             <img src="/phonepe-logo.svg" alt="PhonePe Logo" className="h-8 w-auto" />
           </div>
           
           <div className="mb-10 text-center lg:text-left">
