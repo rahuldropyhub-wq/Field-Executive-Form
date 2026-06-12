@@ -88,7 +88,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 
-                <div className="space-y-4 mb-8">
+                <div className="space-y-4 mb-6">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-500 flex items-center"><MapPin className="h-4 w-4 mr-2" /> Location</span>
                     <span className="font-semibold text-slate-900">Telangana and AP selected district</span>
@@ -104,6 +104,20 @@ export default function LandingPage() {
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-500 flex items-center"><Calendar className="h-4 w-4 mr-2" /> Working Days</span>
                     <span className="font-semibold text-slate-900">6 Days / Week</span>
+                  </div>
+                </div>
+
+                {/* Eligibility Highlights */}
+                <div className="flex gap-3 mb-6">
+                  <div className="flex-1 bg-blue-50 border border-blue-200 rounded-xl p-3 flex flex-col items-center text-center">
+                    <Users className="h-5 w-5 text-blue-600 mb-1" />
+                    <span className="text-xs text-blue-500 font-medium">Gender</span>
+                    <span className="text-sm font-bold text-blue-700">Male Only</span>
+                  </div>
+                  <div className="flex-1 bg-purple-50 border border-purple-200 rounded-xl p-3 flex flex-col items-center text-center">
+                    <Calendar className="h-5 w-5 text-purple-600 mb-1" />
+                    <span className="text-xs text-purple-500 font-medium">Age Limit</span>
+                    <span className="text-sm font-bold text-purple-700">18 – 29 Years</span>
                   </div>
                 </div>
 
@@ -208,8 +222,8 @@ export default function LandingPage() {
               </div>
               <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/60">
                 <ul className="space-y-4">
-                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Age:</b> 18 - 27 Years.</span></li>
-                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Gender:</b> Only for Male candidates.</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Age:</b> 18 - 29 Years only. (Above 29 not eligible)</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Gender:</b> Only Male candidates are eligible.</span></li>
                   <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Minimum Qualification:</b> 10th Pass.</span></li>
                   <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700">Must be able to read and understand basic English and/or the local language.</span></li>
                   <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700">Must know how to use a smartphone and mobile applications.</span></li>
