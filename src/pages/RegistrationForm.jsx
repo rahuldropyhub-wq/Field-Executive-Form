@@ -14,7 +14,11 @@ import {
   MapPin, 
   Clock,
   MapPinOff,
-  Navigation
+  Navigation,
+  Users,
+  FileText,
+  AlertCircle,
+  Briefcase
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -36,15 +40,34 @@ const statesList = Object.keys(statesAndDistricts)
 
 
 
+// Age calculation helper
+const calculateAge = (dob) => {
+  if (!dob) return null
+  const today = new Date()
+  const birthDate = new Date(dob)
+  let age = today.getFullYear() - birthDate.getFullYear()
+  const m = today.getMonth() - birthDate.getMonth()
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--
+  }
+  return age
+}
+
 const formSchema = z.object({
   full_name: z.string().min(3, { message: "Name must be at least 3 characters." }),
-  email: z.string().email({ message: "Invalid email address." }),
+  email: z
+    .string()
+    .email({ message: "Invalid email address." })
+    .refine((val) => val.toLowerCase().endsWith("@gmail.com"), {
+      message: "Only Gmail addresses are accepted (e.g. name@gmail.com).",
+    }),
   mobile_number: z.string().regex(/^[6-9]\d{9}$/, { message: "Invalid Indian mobile number." }),
+  gender: z.string().min(1, { message: "Please select your gender." }),
   qualification: z.string().min(1, { message: "Please select a qualification." }),
+  previous_experience: z.string().min(1, { message: "Please select your experience." }),
   date_of_birth: z.date({ required_error: "A date of birth is required." }),
   state: z.string().min(1, { message: "Please select a state." }),
   district: z.string().min(1, { message: "Please select a district." }),
-
 })
 
 export default function RegistrationForm() {
@@ -56,16 +79,31 @@ export default function RegistrationForm() {
   const [coords, setCoords] = useState(null)
   const [locationAddress, setLocationAddress] = useState(null)
 
+  // Document checkboxes state
+  const [documents, setDocuments] = useState({
+    driving_licence: false,
+    aadhar: false,
+    pan: false,
+  })
+  const [documentsError, setDocumentsError] = useState("")
+
+  // Age eligibility state
+  const [ageError, setAgeError] = useState("")
+
+  // Location mandatory error
+  const [locationRequired, setLocationRequired] = useState("")
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       full_name: "",
       email: "",
       mobile_number: "",
+      gender: "",
       qualification: "",
+      previous_experience: "",
       state: "",
       district: "",
-
     },
   })
 
@@ -116,18 +154,52 @@ export default function RegistrationForm() {
     )
   }
 
+  const handleDocumentChange = (doc) => {
+    setDocuments((prev) => ({ ...prev, [doc]: !prev[doc] }))
+    setDocumentsError("")
+  }
+
   async function onSubmit(values) {
+    // Validate age (18-29)
+    const age = calculateAge(values.date_of_birth)
+    if (age === null || age < 18) {
+      setAgeError("You must be at least 18 years old to apply.")
+      return
+    }
+    if (age > 29) {
+      setAgeError("Sorry, applicants above 29 years of age are not eligible.")
+      return
+    }
+    setAgeError("")
+
+    // Validate location
+    if (!coords) {
+      setLocationRequired("Please capture your current location before submitting.")
+      return
+    }
+    setLocationRequired("")
+
+    // Validate documents
+    const allDocsChecked = documents.driving_licence && documents.aadhar && documents.pan
+    if (!allDocsChecked) {
+      setDocumentsError("Please confirm you have all 3 required documents.")
+      return
+    }
+    setDocumentsError("")
+
     try {
       setIsSubmitting(true)
       await submitApplication({
         full_name: values.full_name,
         email: values.email,
         mobile_number: values.mobile_number,
+        gender: values.gender,
         qualification: values.qualification,
+        previous_experience: values.previous_experience,
         date_of_birth: values.date_of_birth.toISOString().split("T")[0],
         state: values.state,
         district: values.district,
-
+        documents_verified: true,
         latitude: coords?.latitude || null,
         longitude: coords?.longitude || null,
         location_address: locationAddress || null,
@@ -215,6 +287,33 @@ export default function RegistrationForm() {
                 )}
               />
 
+              {/* Gender Field */}
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-slate-700 font-medium">Gender</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                            <Users className="h-4 w-4 text-slate-400" />
+                          </div>
+                          <SelectTrigger className="pl-10 h-12 bg-white border-slate-200 hover:border-primary/50 transition-colors rounded-xl">
+                            <SelectValue placeholder="Select gender" />
+                          </SelectTrigger>
+                        </div>
+                      </FormControl>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="Male" className="rounded-lg">Male</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="mobile_number"
@@ -272,6 +371,37 @@ export default function RegistrationForm() {
                 )}
               />
 
+              {/* Previous Experience Field */}
+              <FormField
+                control={form.control}
+                name="previous_experience"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-slate-700 font-medium">Previous Experience</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                            <Briefcase className="h-4 w-4 text-slate-400" />
+                          </div>
+                          <SelectTrigger className="pl-10 h-12 bg-white border-slate-200 hover:border-primary/50 transition-colors rounded-xl">
+                            <SelectValue placeholder="Select experience" />
+                          </SelectTrigger>
+                        </div>
+                      </FormControl>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="0 Years (Fresher)" className="rounded-lg">0 Years (Fresher)</SelectItem>
+                        <SelectItem value="1 Year" className="rounded-lg">1 Year</SelectItem>
+                        <SelectItem value="2 Years" className="rounded-lg">2 Years</SelectItem>
+                        <SelectItem value="3 Years" className="rounded-lg">3 Years</SelectItem>
+                        <SelectItem value="4 Years" className="rounded-lg">4 Years</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="date_of_birth"
@@ -289,8 +419,16 @@ export default function RegistrationForm() {
                           {...field}
                           value={field.value ? (field.value instanceof Date ? field.value.toISOString().split("T")[0] : field.value) : ""}
                           onChange={(e) => {
+                            setAgeError("")
                             if (e.target.value) {
-                                field.onChange(new Date(e.target.value));
+                                const dob = new Date(e.target.value)
+                                field.onChange(dob)
+                                const age = calculateAge(dob)
+                                if (age !== null && age < 18) {
+                                  setAgeError("You must be at least 18 years old to apply.")
+                                } else if (age !== null && age > 29) {
+                                  setAgeError("Sorry, applicants above 29 years of age are not eligible.")
+                                }
                             } else {
                                 field.onChange(undefined);
                             }
@@ -300,6 +438,12 @@ export default function RegistrationForm() {
                       </div>
                     </FormControl>
                     <FormMessage />
+                    {ageError && (
+                      <div className="flex items-center gap-1.5 mt-1 text-red-500 text-xs font-medium">
+                        <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                        {ageError}
+                      </div>
+                    )}
                   </FormItem>
                 )}
               />
@@ -370,18 +514,63 @@ export default function RegistrationForm() {
 
 
 
+              {/* Required Documents Section */}
+              <div className="space-y-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                <div className="flex items-center gap-2 mb-1">
+                  <FileText className="h-4 w-4 text-purple-500" />
+                  <span className="text-sm text-slate-700 font-semibold">Required Documents</span>
+                </div>
+                <p className="text-xs text-slate-500 -mt-1">Confirm you have the following documents ready for verification.</p>
+                <div className="space-y-2 mt-2">
+                  {[
+                    { key: "driving_licence", label: "Driving Licence" },
+                    { key: "aadhar", label: "Aadhar Card" },
+                    { key: "pan", label: "PAN Card" },
+                  ].map(({ key, label }) => (
+                    <label
+                      key={key}
+                      className={cn(
+                        "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all",
+                        documents[key]
+                          ? "bg-purple-50 border-purple-300 text-purple-800"
+                          : "bg-white border-slate-200 text-slate-700 hover:border-purple-200"
+                      )}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={documents[key]}
+                        onChange={() => handleDocumentChange(key)}
+                        className="w-4 h-4 accent-purple-600 cursor-pointer"
+                      />
+                      <span className="text-sm font-medium">{label}</span>
+                      {documents[key] && (
+                        <span className="ml-auto text-xs text-purple-600 font-semibold">✓ Confirmed</span>
+                      )}
+                    </label>
+                  ))}
+                </div>
+                {documentsError && (
+                  <div className="flex items-center gap-1.5 text-red-500 text-xs font-medium mt-1">
+                    <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                    {documentsError}
+                  </div>
+                )}
+              </div>
+
               <div className="space-y-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <label className="text-sm text-slate-700 font-medium">Current Location</label>
-                    <p className="text-xs text-slate-500">Capture your exact GPS location</p>
+                    <label className="text-sm text-slate-700 font-medium">
+                      Current Location <span className="text-red-500">*</span>
+                    </label>
+                    <p className="text-xs text-slate-500">Capture your exact GPS location (required)</p>
                   </div>
                   <Button 
                     type="button" 
                     variant={coords ? "default" : "outline"}
                     size="sm"
                     className={cn("rounded-lg", coords && "bg-emerald-600 hover:bg-emerald-700")}
-                    onClick={getLocation}
+                    onClick={() => { setLocationRequired(""); getLocation() }}
                     disabled={isLocating}
                   >
                     {isLocating ? (
@@ -409,6 +598,12 @@ export default function RegistrationForm() {
                         {locationAddress}
                       </div>
                     )}
+                  </div>
+                )}
+                {locationRequired && (
+                  <div className="flex items-center gap-1.5 text-red-500 text-xs font-medium mt-1">
+                    <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                    {locationRequired}
                   </div>
                 )}
               </div>

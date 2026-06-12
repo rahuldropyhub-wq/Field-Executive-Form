@@ -78,11 +78,13 @@ export default function Dashboard() {
       "Full Name": c.full_name,
       "Email Address": c.email,
       "Mobile Number": c.mobile_number,
+      "Gender": c.gender || "N/A",
       "Qualification": c.qualification,
+      "Previous Experience": c.previous_experience || "N/A",
       "Date of Birth": c.date_of_birth,
       "State": c.state || c.work_location || "N/A",
       "District": c.district || "N/A",
-
+      "Documents Verified": c.documents_verified ? "Yes" : "No",
       "GPS Latitude": c.latitude || "N/A",
       "GPS Longitude": c.longitude || "N/A",
       "Exact Address (Auto)": c.location_address || "N/A",
@@ -137,7 +139,7 @@ export default function Dashboard() {
       doc.setTextColor(100, 100, 100);
       doc.text(`Generated on: ${dateStr}`, 14, 38);
 
-      const tableColumn = ["Full Name", "Email", "Mobile", "Qualification", "DOB", "State", "District", "Captured Location", "Date Applied"];
+      const tableColumn = ["Full Name", "Email", "Mobile", "Gender", "Qualification", "Experience", "DOB", "State", "District", "Docs", "Location", "Date Applied"];
       const tableRows = [];
 
       filteredCandidates.forEach(c => {
@@ -145,11 +147,13 @@ export default function Dashboard() {
           c.full_name,
           c.email,
           c.mobile_number,
+          c.gender || "N/A",
           c.qualification,
+          c.previous_experience || "N/A",
           new Date(c.date_of_birth).toLocaleDateString(),
           c.state || c.work_location || "N/A",
           c.district || "N/A",
-
+          c.documents_verified ? "✓ Yes" : "✗ No",
           c.location_address || "N/A",
           new Date(c.created_at).toLocaleDateString()
         ]);
@@ -299,11 +303,13 @@ export default function Dashboard() {
                   <th className="px-6 py-4 whitespace-nowrap">Full Name</th>
                   <th className="px-6 py-4 whitespace-nowrap">Email</th>
                   <th className="px-6 py-4 whitespace-nowrap">Mobile Number</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Gender</th>
                   <th className="px-6 py-4 whitespace-nowrap">Qualification</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Experience</th>
                   <th className="px-6 py-4 whitespace-nowrap">Date of Birth</th>
                   <th className="px-6 py-4 whitespace-nowrap">State</th>
                   <th className="px-6 py-4 whitespace-nowrap">District</th>
-
+                  <th className="px-6 py-4 whitespace-nowrap">Documents</th>
                   <th className="px-6 py-4 whitespace-nowrap">Captured Location</th>
                   <th className="px-6 py-4 whitespace-nowrap">Date Applied</th>
                 </tr>
@@ -327,8 +333,16 @@ export default function Dashboard() {
                       <td className="px-6 py-4 whitespace-nowrap text-slate-600">
                         {candidate.mobile_number}
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                          {candidate.gender || "N/A"}
+                        </span>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-slate-600">
                         {candidate.qualification}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                        {candidate.previous_experience || "N/A"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-slate-600">
                         {new Date(candidate.date_of_birth).toLocaleDateString()}
@@ -339,7 +353,13 @@ export default function Dashboard() {
                       <td className="px-6 py-4 whitespace-nowrap text-slate-600">
                         {candidate.district || "N/A"}
                       </td>
-
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {candidate.documents_verified ? (
+                          <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">✓ Verified</span>
+                        ) : (
+                          <span className="bg-red-50 text-red-600 text-xs font-semibold px-2.5 py-1 rounded-full">✗ No</span>
+                        )}
+                      </td>
                       <td className="px-6 py-4 min-w-[250px]">
                         {candidate.location_address ? (
                           <div className="flex items-start text-slate-600">
@@ -395,6 +415,13 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="flex items-start text-slate-600">
+                      <Users className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                      <div>
+                        <p className="text-xs text-slate-400 font-medium">Gender</p>
+                        <p className="text-slate-700">{candidate.gender || "N/A"}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start text-slate-600">
                       <Calendar className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
                       <div>
                         <p className="text-xs text-slate-400 font-medium">Date of Birth</p>
@@ -404,8 +431,22 @@ export default function Dashboard() {
                     <div className="flex items-start text-slate-600">
                       <Briefcase className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
                       <div>
+                        <p className="text-xs text-slate-400 font-medium">Previous Experience</p>
+                        <p className="text-slate-700">{candidate.previous_experience || "N/A"}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start text-slate-600">
+                      <MapPin className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                      <div>
                         <p className="text-xs text-slate-400 font-medium">Location</p>
                         <p className="text-slate-700">{candidate.district ? `${candidate.district}, ${candidate.state}` : candidate.work_location}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start text-slate-600">
+                      <FileText className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                      <div>
+                        <p className="text-xs text-slate-400 font-medium">Documents Verified</p>
+                        <p className="text-slate-700">{candidate.documents_verified ? "✓ Yes" : "✗ No"}</p>
                       </div>
                     </div>
                     <div className="flex items-start text-slate-600 bg-slate-50 p-3 rounded-xl mt-2 border border-slate-100">

@@ -43,6 +43,9 @@ const initDB = async () => {
     // Safely add new columns for state and district 
     await pool.query("ALTER TABLE candidates ADD COLUMN IF NOT EXISTS state TEXT;");
     await pool.query("ALTER TABLE candidates ADD COLUMN IF NOT EXISTS district TEXT;");
+    await pool.query("ALTER TABLE candidates ADD COLUMN IF NOT EXISTS gender TEXT;");
+    await pool.query("ALTER TABLE candidates ADD COLUMN IF NOT EXISTS documents_verified BOOLEAN DEFAULT false;");
+    await pool.query("ALTER TABLE candidates ADD COLUMN IF NOT EXISTS previous_experience TEXT;");
     
     console.log("Database initialized successfully.");
   } catch (err) {
@@ -56,24 +59,30 @@ initDB();
 app.post("/api/candidates", async (req, res) => {
   try {
     const { 
-      full_name, email, mobile_number, qualification, 
-      date_of_birth, state, district, 
+      full_name, email, mobile_number, qualification,
+      previous_experience,
+      date_of_birth, state, district,
+      gender, documents_verified,
       latitude, longitude, location_address 
     } = req.body;
 
     const insertQuery = `
       INSERT INTO candidates (
-        full_name, email, mobile_number, qualification, 
-        date_of_birth, state, district, work_location, notice_period, 
+        full_name, email, mobile_number, qualification,
+        previous_experience,
+        date_of_birth, state, district, work_location, notice_period,
+        gender, documents_verified,
         latitude, longitude, location_address
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
       RETURNING *;
     `;
     
     const values = [
-      full_name, email, mobile_number, qualification, 
-      date_of_birth, state, district, `${district}, ${state}`, 'N/A', 
+      full_name, email, mobile_number, qualification,
+      previous_experience || null,
+      date_of_birth, state, district, `${district}, ${state}`, 'N/A',
+      gender || null, documents_verified || false,
       latitude, longitude, location_address
     ];
 
