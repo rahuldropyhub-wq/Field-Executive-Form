@@ -46,6 +46,31 @@ const initDB = async () => {
     await pool.query("ALTER TABLE candidates ADD COLUMN IF NOT EXISTS gender TEXT;");
     await pool.query("ALTER TABLE candidates ADD COLUMN IF NOT EXISTS documents_verified BOOLEAN DEFAULT false;");
     await pool.query("ALTER TABLE candidates ADD COLUMN IF NOT EXISTS previous_experience TEXT;");
+
+    // Initialize Tide candidates table
+    const queryTide = `
+      CREATE TABLE IF NOT EXISTS tide_candidates (
+          id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+          full_name TEXT NOT NULL,
+          email TEXT UNIQUE NOT NULL,
+          mobile_number TEXT UNIQUE NOT NULL,
+          qualification TEXT NOT NULL,
+          date_of_birth DATE NOT NULL,
+          work_location TEXT NOT NULL,
+          notice_period TEXT NOT NULL,
+          latitude DOUBLE PRECISION,
+          longitude DOUBLE PRECISION,
+          location_address TEXT,
+          state TEXT,
+          district TEXT,
+          gender TEXT,
+          documents_verified BOOLEAN DEFAULT false,
+          previous_experience TEXT,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+      );
+    `;
+    await pool.query(queryTide);
     
     console.log("Database initialized successfully.");
   } catch (err) {
@@ -55,7 +80,7 @@ const initDB = async () => {
 
 initDB();
 
-// API endpoint to submit a new application
+// API endpoint to submit a new PhonePe application
 app.post("/api/candidates", async (req, res) => {
   try {
     const { 
@@ -109,6 +134,64 @@ app.get("/api/candidates", async (req, res) => {
     res.status(200).json(rows);
   } catch (error) {
     console.error("Error fetching candidates:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// API endpoint to submit a new Tide application
+app.post("/api/tide-candidates", async (req, res) => {
+  try {
+    const { 
+      full_name, email, mobile_number, qualification,
+      previous_experience,
+      date_of_birth, state, district,
+      gender, documents_verified,
+      latitude, longitude, location_address 
+    } = req.body;
+
+    const insertQuery = `
+      INSERT INTO tide_candidates (
+        full_name, email, mobile_number, qualification,
+        previous_experience,
+        date_of_birth, state, district, work_location, notice_period,
+        gender, documents_verified,
+        latitude, longitude, location_address
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
+      RETURNING *;
+    `;
+    
+    const values = [
+      full_name, email, mobile_number, qualification,
+      previous_experience || null,
+      date_of_birth, state, district, `${district}, ${state}`, 'N/A',
+      gender || null, documents_verified || false,
+      latitude, longitude, location_address
+    ];
+
+    const { rows } = await pool.query(insertQuery, values);
+    res.status(201).json(rows[0]);
+
+  } catch (error) {
+    console.error("Error inserting Tide candidate:", error);
+    if (error.code === '23505') { // unique violation
+      return res.status(409).json({ error: "Application with this email or mobile number already exists." });
+    }
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// API endpoint to fetch all Tide candidates (for admin panel)
+app.get("/api/tide-candidates", async (req, res) => {
+  try {
+    // Automatically delete Tide candidates older than 2 months
+    await pool.query("DELETE FROM tide_candidates WHERE created_at < NOW() - INTERVAL '2 months';");
+
+    // Fetch the remaining data
+    const { rows } = await pool.query("SELECT * FROM tide_candidates ORDER BY created_at DESC;");
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error fetching Tide candidates:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

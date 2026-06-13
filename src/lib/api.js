@@ -29,6 +29,35 @@ export const getCandidates = async () => {
   return result;
 }
 
+export const submitTideApplication = async (data) => {
+  const response = await fetch('/api/tide-candidates', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to submit application");
+  }
+
+  return result;
+}
+
+export const getTideCandidates = async () => {
+  const response = await fetch('/api/tide-candidates');
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to fetch candidates");
+  }
+
+  return result;
+}
+
 export const loginAdmin = async (email, password) => {
   const response = await fetch('/api/admin/login', {
     method: 'POST',

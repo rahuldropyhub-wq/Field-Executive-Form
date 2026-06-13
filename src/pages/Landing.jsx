@@ -1,10 +1,18 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Briefcase, MapPin, IndianRupee, Calendar, ArrowRight, CheckCircle2, ChevronRight, GraduationCap, Smartphone, Target, Users, FileText, Gift, Activity, Compass, UserCheck } from "lucide-react"
 
 export default function LandingPage() {
   const navigate = useNavigate()
+
+  useEffect(() => {
+    document.title = "PhonePe Field Executive Portal"
+    const favicon = document.querySelector("link[rel='icon']")
+    if (favicon) {
+      favicon.href = "/favicon.svg"
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans selection:bg-primary/20">

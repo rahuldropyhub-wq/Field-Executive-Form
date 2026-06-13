@@ -4,11 +4,14 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Download, FileText, Users, MapPin, Calendar, Briefcase, Phone, Mail, Loader2, LogOut, Search, Filter } from "lucide-react";
-import { getCandidates } from "@/lib/api";
+import { getCandidates, getTideCandidates } from "@/lib/api";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function Dashboard() {
-  const [candidates, setCandidates] = useState([]);
+  const [phonepeCandidates, setPhonepeCandidates] = useState([]);
+  const [tideCandidates, setTideCandidates] = useState([]);
+  const [activeTab, setActiveTab] = useState("phonepe"); // "phonepe" or "tide"
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,8 +33,12 @@ export default function Dashboard() {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const data = await getCandidates();
-      setCandidates(data);
+      const [pData, tData] = await Promise.all([
+        getCandidates(),
+        getTideCandidates()
+      ]);
+      setPhonepeCandidates(pData);
+      setTideCandidates(tData);
     } catch (err) {
       setError(err.message || "Failed to fetch candidates");
     } finally {
@@ -39,7 +46,10 @@ export default function Dashboard() {
     }
   };
 
-  const filteredCandidates = candidates.filter((c) => {
+  const isPhonePe = activeTab === "phonepe";
+  const currentCandidates = isPhonePe ? phonepeCandidates : tideCandidates;
+
+  const filteredCandidates = currentCandidates.filter((c) => {
     // Search filter
     const matchesSearch = 
       c.full_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -93,10 +103,14 @@ export default function Dashboard() {
 
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Candidates");
+    const sheetName = isPhonePe ? "PhonePe Candidates" : "Tide Candidates";
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
     
     const dateStr = new Date().toISOString().split('T')[0];
-    XLSX.writeFile(workbook, `PhonePe_Field_Executives_${dateStr}.xlsx`);
+    const fileName = isPhonePe 
+      ? `PhonePe_Field_Executives_${dateStr}.xlsx` 
+      : `Tide_Field_Executives_${dateStr}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
   };
 
   const exportToPDF = async () => {
@@ -105,34 +119,49 @@ export default function Dashboard() {
     try {
       const doc = new jsPDF('landscape');
       
-      try {
-        // Load SVG and draw to canvas to get a PNG data URL for jsPDF
-        const img = new Image();
-        img.src = '/phonepe-logo.svg';
-        await new Promise((resolve, reject) => {
-          img.onload = resolve;
-          img.onerror = reject;
-        });
-        
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width || 200;
-        canvas.height = img.height || 50;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL('image/png');
-        
-        // Add Logo
-        doc.addImage(dataUrl, 'PNG', 14, 10, 40, 40 * (canvas.height/canvas.width));
-      } catch (e) {
-        console.warn("Could not load logo for PDF", e);
+      if (isPhonePe) {
+        try {
+          // Load SVG and draw to canvas to get a PNG data URL for jsPDF
+          const img = new Image();
+          img.src = '/phonepe-logo.svg';
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+          });
+          
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width || 200;
+          canvas.height = img.height || 50;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL('image/png');
+          
+          // Add Logo
+          doc.addImage(dataUrl, 'PNG', 14, 10, 40, 40 * (canvas.height/canvas.width));
+        } catch (e) {
+          console.warn("Could not load logo for PDF", e);
+          doc.setFontSize(22);
+          doc.setTextColor(95, 37, 159);
+          doc.setFont("helvetica", "bold");
+          doc.text("PhonePe", 14, 22);
+        }
+      } else {
+        // Draw Tide SVG / wordmark on PDF
         doc.setFontSize(22);
-        doc.setTextColor(95, 37, 159);
-        doc.text("PhonePe", 14, 22);
+        doc.setTextColor(15, 46, 89); // Tide Navy
+        doc.setFont("helvetica", "bold");
+        doc.text("tide", 14, 22);
+        
+        doc.setFillColor(0, 168, 150); // Tide Teal
+        doc.circle(28, 18, 2, "F");
       }
       
       doc.setFontSize(16);
       doc.setTextColor(40, 40, 40);
-      doc.text("Field Executives Application Report", 14, 32);
+      const reportTitle = isPhonePe 
+        ? "PhonePe Field Executives Application Report" 
+        : "Tide Field Executives Application Report";
+      doc.text(reportTitle, 14, 32);
       
       const dateStr = new Date().toLocaleDateString();
       doc.setFontSize(10);
@@ -159,17 +188,23 @@ export default function Dashboard() {
         ]);
       });
 
+      // PhonePe Purple vs Tide Navy
+      const primaryColor = isPhonePe ? [95, 37, 159] : [15, 46, 89];
+
       autoTable(doc, {
         head: [tableColumn],
         body: tableRows,
         startY: 45,
         styles: { fontSize: 8, cellPadding: 3 },
-        headStyles: { fillColor: [95, 37, 159], textColor: [255, 255, 255] }, // PhonePe Purple
+        headStyles: { fillColor: primaryColor, textColor: [255, 255, 255] },
         alternateRowStyles: { fillColor: [248, 250, 252] }
       });
 
       const dateStrFile = new Date().toISOString().split('T')[0];
-      doc.save(`PhonePe_Field_Executives_${dateStrFile}.pdf`);
+      const pdfFileName = isPhonePe 
+        ? `PhonePe_Field_Executives_${dateStrFile}.pdf` 
+        : `Tide_Field_Executives_${dateStrFile}.pdf`;
+      doc.save(pdfFileName);
     } catch (err) {
       console.error("Failed to generate PDF:", err);
       alert("Failed to generate PDF. Please check console for details.");
@@ -190,15 +225,34 @@ export default function Dashboard() {
       <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <img src="/phonepe-logo.svg" alt="PhonePe Logo" className="h-8" />
+            {isPhonePe ? (
+              <img src="/phonepe-logo.svg" alt="PhonePe Logo" className="h-8" />
+            ) : (
+              <img src="/tide-logo.png" alt="Tide Logo" className="h-12 w-auto object-contain rounded-md" />
+            )}
             <h1 className="text-xl font-bold text-slate-800 border-l border-slate-200 pl-4">Admin Dashboard</h1>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <Button variant="outline" size="sm" onClick={exportToExcel} disabled={candidates.length === 0} className="hidden sm:flex">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={exportToExcel} 
+              disabled={filteredCandidates.length === 0} 
+              className="hidden sm:flex"
+            >
               <Download className="h-4 w-4 mr-2" />
               Excel
             </Button>
-            <Button variant="outline" size="sm" onClick={exportToPDF} disabled={candidates.length === 0} className="hidden sm:flex text-red-600 border-red-200 hover:bg-red-50">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={exportToPDF} 
+              disabled={filteredCandidates.length === 0} 
+              className={cn(
+                "hidden sm:flex border-red-200 hover:bg-red-50",
+                isPhonePe ? "text-red-600" : "text-rose-600"
+              )}
+            >
               <FileText className="h-4 w-4 mr-2" />
               PDF
             </Button>
@@ -214,16 +268,63 @@ export default function Dashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-center space-x-4">
-            <div className="bg-primary/10 p-3 rounded-lg text-primary">
+            <div className="bg-purple-100 p-3 rounded-lg text-[#5f259f]">
               <Users className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-500">Total Applications</p>
-              <h3 className="text-2xl font-bold text-slate-900">{filteredCandidates.length} {filteredCandidates.length !== candidates.length && <span className="text-sm text-slate-400 font-normal ml-2"> (Filtered from {candidates.length})</span>}</h3>
+              <p className="text-sm font-medium text-slate-500">PhonePe Applications</p>
+              <h3 className="text-2xl font-bold text-slate-900">{phonepeCandidates.length}</h3>
             </div>
           </div>
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-center space-x-4">
+            <div className="bg-teal-50 p-3 rounded-lg text-[#00A896]">
+              <Users className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-500">Tide Applications</p>
+              <h3 className="text-2xl font-bold text-slate-900">{tideCandidates.length}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Module Switcher Tabs */}
+        <div className="flex border border-slate-200 mb-6 bg-white p-1.5 rounded-xl shadow-sm max-w-md">
+          <button
+            onClick={() => {
+              setActiveTab("phonepe");
+              setSearchTerm("");
+              setStartDate("");
+              setEndDate("");
+            }}
+            className={cn(
+              "flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all flex items-center justify-center space-x-2",
+              isPhonePe
+                ? "bg-[#5f259f] text-white shadow-sm"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+            )}
+          >
+            <Users className="h-4 w-4 shrink-0" />
+            <span>PhonePe Module</span>
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("tide");
+              setSearchTerm("");
+              setStartDate("");
+              setEndDate("");
+            }}
+            className={cn(
+              "flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all flex items-center justify-center space-x-2",
+              !isPhonePe
+                ? "bg-[#0F2E59] text-white shadow-sm"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+            )}
+          >
+            <Users className="h-4 w-4 shrink-0 text-[#00A896]" />
+            <span>Tide Module</span>
+          </button>
         </div>
 
         {/* Filter Bar */}
@@ -232,17 +333,23 @@ export default function Dashboard() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input 
               type="text" 
-              placeholder="Search by name, email, or phone..." 
+              placeholder={`Search ${isPhonePe ? "PhonePe" : "Tide"} candidates...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              className={cn(
+                "w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 transition-all",
+                isPhonePe ? "focus:ring-[#5f259f]/20 focus:border-[#5f259f]" : "focus:ring-[#00A896]/20 focus:border-[#00A896]"
+              )}
             />
           </div>
           
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <Filter className="h-4 w-4 text-slate-400 hidden sm:block" />
-              <div className="flex items-center gap-2 w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+              <div className={cn(
+                "flex items-center gap-2 w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 focus-within:ring-2 transition-all",
+                isPhonePe ? "focus-within:ring-[#5f259f]/20 focus-within:border-[#5f259f]" : "focus-within:ring-[#00A896]/20 focus-within:border-[#00A896]"
+              )}>
                 <span className="text-xs text-slate-500 font-medium whitespace-nowrap">From:</span>
                 <input 
                   type="date" 
@@ -253,7 +360,10 @@ export default function Dashboard() {
               </div>
             </div>
             
-            <div className="flex items-center gap-2 w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+            <div className={cn(
+              "flex items-center gap-2 w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 focus-within:ring-2 transition-all",
+              isPhonePe ? "focus-within:ring-[#5f259f]/20 focus-within:border-[#5f259f]" : "focus-within:ring-[#00A896]/20 focus-within:border-[#00A896]"
+            )}>
               <span className="text-xs text-slate-500 font-medium whitespace-nowrap">To:</span>
               <input 
                 type="date" 
@@ -285,7 +395,7 @@ export default function Dashboard() {
         {/* Data Table */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-50/50 gap-4">
-            <h2 className="font-semibold text-slate-800">Applications</h2>
+            <h2 className="font-semibold text-slate-800">{isPhonePe ? "PhonePe Applications" : "Tide Applications"}</h2>
             <div className="flex gap-2 sm:hidden w-full">
               <Button variant="outline" size="sm" onClick={exportToExcel} disabled={filteredCandidates.length === 0} className="flex-1">
                 <Download className="h-4 w-4 mr-2" /> Excel
@@ -317,7 +427,7 @@ export default function Dashboard() {
               <tbody className="divide-y divide-slate-100">
                 {filteredCandidates.length === 0 ? (
                   <tr>
-                    <td colSpan="9" className="px-6 py-8 text-center text-slate-500">
+                    <td colSpan="12" className="px-6 py-8 text-center text-slate-500">
                       No applications match your filters.
                     </td>
                   </tr>
@@ -334,7 +444,10 @@ export default function Dashboard() {
                         {candidate.mobile_number}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                        <span className={cn(
+                          "text-xs font-semibold px-2.5 py-1 rounded-full",
+                          isPhonePe ? "bg-purple-50 text-purple-700" : "bg-teal-50 text-teal-700"
+                        )}>
                           {candidate.gender || "N/A"}
                         </span>
                       </td>
