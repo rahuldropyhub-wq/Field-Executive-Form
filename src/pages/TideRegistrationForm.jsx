@@ -83,7 +83,7 @@ export default function TideRegistrationForm() {
   })
   const [documentsError, setDocumentsError] = useState("")
 
-  // Age eligibility state (18 to 27)
+  // Age eligibility state (18 to 30)
   const [ageError, setAgeError] = useState("")
 
   // Location mandatory error
@@ -164,14 +164,14 @@ export default function TideRegistrationForm() {
   }
 
   async function onSubmit(values) {
-    // Validate age (18-27 for Tide)
+    // Validate age (18-30 for Tide)
     const age = calculateAge(values.date_of_birth)
     if (age === null || age < 18) {
       setAgeError("You must be at least 18 years old to apply.")
       return
     }
-    if (age > 27) {
-      setAgeError("Sorry, applicants above 27 years of age are not eligible.")
+    if (age > 30) {
+      setAgeError("Sorry, applicants above 30 years of age are not eligible.")
       return
     }
     setAgeError("")
@@ -432,8 +432,8 @@ export default function TideRegistrationForm() {
                                 const age = calculateAge(dob)
                                 if (age !== null && age < 18) {
                                   setAgeError("You must be at least 18 years old to apply.")
-                                } else if (age !== null && age > 27) {
-                                  setAgeError("Sorry, applicants above 27 years of age are not eligible.")
+                                } else if (age !== null && age > 30) {
+                                  setAgeError("Sorry, applicants above 30 years of age are not eligible.")
                                 }
                             } else {
                                 field.onChange(undefined);

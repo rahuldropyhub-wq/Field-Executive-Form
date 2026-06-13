@@ -126,7 +126,7 @@ export default function TideLandingPage() {
                   <div className="flex-1 bg-[#103FEF]/5 border border-[#103FEF]/20 rounded-xl p-3 flex flex-col items-center text-center">
                     <Calendar className="h-5 w-5 text-[#103FEF] mb-1" />
                     <span className="text-xs text-[#103FEF] font-medium">Age Limit</span>
-                    <span className="text-sm font-bold text-[#103FEF]">18 – 27 Years</span>
+                    <span className="text-sm font-bold text-[#103FEF]">18 – 30 Years</span>
                   </div>
                 </div>
 
@@ -217,7 +217,7 @@ export default function TideLandingPage() {
                 <ul className="space-y-4">
                   <li className="flex items-start">
                     <CheckCircle2 className="h-5 w-5 text-[#103FEF] mr-3 shrink-0 mt-0.5" />
-                    <span className="text-slate-700"><b>Age Limit:</b> 18 to 27 years old.</span>
+                    <span className="text-slate-700"><b>Age Limit:</b> 18 to 30 years old.</span>
                   </li>
                   <li className="flex items-start">
                     <CheckCircle2 className="h-5 w-5 text-[#103FEF] mr-3 shrink-0 mt-0.5" />
