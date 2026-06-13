@@ -262,7 +262,7 @@ export default function RegistrationForm() {
                 name="full_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-700 font-medium">Full Name</FormLabel>
+                    <FormLabel className="text-slate-700 font-medium">Full Name <span className="text-red-500">*</span></FormLabel>
                     <FormControl>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -281,7 +281,7 @@ export default function RegistrationForm() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-700 font-medium">Email Address</FormLabel>
+                    <FormLabel className="text-slate-700 font-medium">Email Address <span className="text-red-500">*</span></FormLabel>
                     <FormControl>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -301,7 +301,7 @@ export default function RegistrationForm() {
                 name="gender"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-700 font-medium">Gender</FormLabel>
+                    <FormLabel className="text-slate-700 font-medium">Gender <span className="text-red-500">*</span></FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <div className="relative">
@@ -327,7 +327,7 @@ export default function RegistrationForm() {
                 name="mobile_number"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-700 font-medium">Contact Number</FormLabel>
+                    <FormLabel className="text-slate-700 font-medium">Contact Number <span className="text-red-500">*</span></FormLabel>
                     <FormControl>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -356,7 +356,7 @@ export default function RegistrationForm() {
                 name="qualification"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-700 font-medium">Qualification</FormLabel>
+                    <FormLabel className="text-slate-700 font-medium">Qualification <span className="text-red-500">*</span></FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <div className="relative">
@@ -385,7 +385,7 @@ export default function RegistrationForm() {
                 name="previous_experience"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-700 font-medium">Previous Experience</FormLabel>
+                    <FormLabel className="text-slate-700 font-medium">Previous Experience <span className="text-red-500">*</span></FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <div className="relative">
@@ -415,7 +415,7 @@ export default function RegistrationForm() {
                 name="date_of_birth"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-700 font-medium">Date of Birth</FormLabel>
+                    <FormLabel className="text-slate-700 font-medium">Date of Birth <span className="text-red-500">*</span></FormLabel>
                     <FormControl>
                       <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -462,7 +462,7 @@ export default function RegistrationForm() {
                   name="state"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-slate-700 font-medium">Work State</FormLabel>
+                      <FormLabel className="text-slate-700 font-medium">Work State <span className="text-red-500">*</span></FormLabel>
                       <Select 
                         onValueChange={(value) => {
                           field.onChange(value);
@@ -496,7 +496,7 @@ export default function RegistrationForm() {
                   name="district"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-slate-700 font-medium">Work District</FormLabel>
+                      <FormLabel className="text-slate-700 font-medium">Work District <span className="text-red-500">*</span></FormLabel>
                       <Select onValueChange={field.onChange} value={field.value} disabled={!selectedState}>
                         <FormControl>
                           <div className="relative">
@@ -526,14 +526,14 @@ export default function RegistrationForm() {
               <div className="space-y-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
                 <div className="flex items-center gap-2 mb-1">
                   <FileText className="h-4 w-4 text-purple-500" />
-                  <span className="text-sm text-slate-700 font-semibold">Required Documents</span>
+                  <span className="text-sm text-slate-700 font-semibold">Required Documents <span className="text-red-500">*</span></span>
                 </div>
                 <p className="text-xs text-slate-500 -mt-1">Confirm you have the following documents ready for verification.</p>
                 <div className="space-y-2 mt-2">
                   {[
-                    { key: "driving_licence", label: "Driving Licence" },
-                    { key: "aadhar", label: "Aadhar Card" },
-                    { key: "pan", label: "PAN Card" },
+                    { key: "driving_licence", label: "Driving Licence *" },
+                    { key: "aadhar", label: "Aadhar Card *" },
+                    { key: "pan", label: "PAN Card *" },
                   ].map(({ key, label }) => (
                     <label
                       key={key}
