@@ -55,15 +55,12 @@ export default function LandingPage() {
               </div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
-                Start Your Career as a <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-200 to-white">Field Executive</span>
+                Start Your Career as a <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-200 to-white">Local Field Executive</span>
               </h1>
               
               <div className="space-y-4 mb-8">
                 <p className="text-lg text-primary-foreground/90 leading-relaxed font-light">
-                  We are looking for energetic and motivated Field Executives to help <span className="font-semibold text-white">expand our user base</span> and <span className="font-semibold text-white">increase brand awareness</span>. The primary responsibility of this role is to <span className="font-semibold text-white">approach individuals in public places</span>, explain the benefits of our platform, assist them in <span className="font-semibold text-white">downloading and installing the mobile application</span>, and help them <span className="font-semibold text-white">complete the registration process</span>.
-                </p>
-                <p className="text-lg text-primary-foreground/90 leading-relaxed font-light">
-                  During the initial growth phase, the focus will be on <span className="font-semibold text-white">user acquisition and registrations</span>. As the platform grows, the role will also involve conducting <span className="font-semibold text-white">brand awareness activities</span> and supporting <span className="font-semibold text-white">customer engagement initiatives</span>.
+                  We are looking for enthusiastic and dedicated <span className="font-semibold text-white">Local Field Executives</span> to join our team. The primary responsibility of this role is to <span className="font-semibold text-white">create brand awareness</span> in the local area, assist customers with registrations, and guide them through the <span className="font-semibold text-white">onboarding and KYC process</span>.
                 </p>
               </div>
               
@@ -87,7 +84,7 @@ export default function LandingPage() {
                       <Briefcase className="h-8 w-8" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-900 text-lg">Field Executive</h3>
+                      <h3 className="font-bold text-slate-900 text-lg">Local Field Executive</h3>
                       <p className="text-slate-500 text-sm">Full-Time Role</p>
                     </div>
                   </div>
@@ -102,16 +99,12 @@ export default function LandingPage() {
                     <span className="font-semibold text-slate-900">Telangana and AP selected district</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500 flex items-center"><IndianRupee className="h-4 w-4 mr-2" /> Freshers</span>
-                    <span className="font-semibold text-emerald-600">17K - 20K / month</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500 flex items-center"><IndianRupee className="h-4 w-4 mr-2" /> Experienced</span>
-                    <span className="font-semibold text-emerald-600">20K - 25K / month</span>
+                    <span className="text-slate-500 flex items-center"><IndianRupee className="h-4 w-4 mr-2" /> Salary Range</span>
+                    <span className="font-semibold text-emerald-600">₹15,000 - ₹30,000 / month</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-500 flex items-center"><Calendar className="h-4 w-4 mr-2" /> Working Days</span>
-                    <span className="font-semibold text-slate-900">6 Days / Week</span>
+                    <span className="font-semibold text-slate-900">Monday to Saturday</span>
                   </div>
                 </div>
 
@@ -125,12 +118,12 @@ export default function LandingPage() {
                   <div className="flex-1 bg-purple-50 border border-purple-200 rounded-xl p-3 flex flex-col items-center text-center">
                     <Calendar className="h-5 w-5 text-purple-600 mb-1" />
                     <span className="text-xs text-purple-500 font-medium">Age Limit</span>
-                    <span className="text-sm font-bold text-purple-700">18 – 29 Years</span>
+                    <span className="text-sm font-bold text-purple-700">18 – 30 Years</span>
                   </div>
                 </div>
 
                 <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10 text-sm text-slate-700 leading-relaxed">
-                  <span className="font-bold text-primary">Ideal Candidate:</span> A self-motivated and energetic individual who enjoys meeting new people, explaining products and services, helping users adopt digital platforms, and contributing to the company's growth through user acquisition and brand awareness activities.
+                  <span className="font-bold text-primary">Important Note:</span> This role does not require visiting shops. Customer data and leads will be provided by the company.
                 </div>
               </div>
             </div>
@@ -147,73 +140,24 @@ export default function LandingPage() {
             <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Key Responsibilities</h2>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* User Acquisition */}
-            <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-[0_2px_15px_rgb(0,0,0,0.03)] hover:border-primary/20 transition-colors">
-              <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
-                <Users className="h-5 w-5 mr-3 text-emerald-500" />
-                User Acquisition
-              </h3>
-              <ul className="space-y-4">
-                {[
-                  "Identify and approach potential users in assigned locations.",
-                  "Explain the company's services, products, and benefits.",
-                  "Assist users in downloading and installing the mobile application.",
-                  "Help users complete account registration and profile setup.",
-                  "Educate users on how to use the application and its features.",
-                  "Encourage active usage of the platform."
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500 mr-3 shrink-0 mt-0.5" />
-                    <span className="text-slate-600 text-sm">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Brand Awareness */}
-            <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-[0_2px_15px_rgb(0,0,0,0.03)] hover:border-primary/20 transition-colors">
-              <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
-                <Activity className="h-5 w-5 mr-3 text-purple-500" />
-                Brand Awareness Activities
-              </h3>
-              <ul className="space-y-4">
-                {[
-                  "Promote the company's brand and services in the assigned territory.",
-                  "Participate in marketing campaigns and awareness programs.",
-                  "Distribute promotional materials when required.",
-                  "Create awareness about the company among the public.",
-                  "Collect customer feedback and market insights."
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-purple-500 mr-3 shrink-0 mt-0.5" />
-                    <span className="text-slate-600 text-sm">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Field Operations */}
-            <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-[0_2px_15px_rgb(0,0,0,0.03)] hover:border-primary/20 transition-colors">
-              <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
-                <Compass className="h-5 w-5 mr-3 text-blue-500" />
-                Field Operations
-              </h3>
-              <ul className="space-y-4">
-                {[
-                  "Conduct daily field visits according to assigned plans.",
-                  "Maintain records of registrations, installations, and user interactions.",
-                  "Submit daily, weekly, and monthly activity reports.",
-                  "Mark attendance and activity updates through company-approved systems.",
-                  "Achieve assigned targets within specified timelines."
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-blue-500 mr-3 shrink-0 mt-0.5" />
-                    <span className="text-slate-600 text-sm">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { title: "Brand Awareness", desc: "Create social media brand awareness in your local area." },
+              { title: "Professional Explanation", desc: "Explain company services and opportunities to potential customers in a professional manner." },
+              { title: "Lead Contact", desc: "Contact customers whose details are provided by the company." },
+              { title: "KYC Guidance", desc: "Guide customers through the registration and KYC process over phone calls." },
+              { title: "Onboarding Support", desc: "Assist customers until their onboarding process is successfully completed." },
+              { title: "Professionalism", desc: "Maintain professional communication with customers at all times." },
+              { title: "Guidelines", desc: "Follow company guidelines and assigned work procedures." }
+            ].map((item, i) => (
+              <div key={i} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-[0_2px_15px_rgb(0,0,0,0.03)] hover:border-primary/20 transition-all hover:-translate-y-1">
+                <div className="bg-primary/5 w-10 h-10 rounded-xl flex items-center justify-center text-primary mb-4">
+                  <CheckCircle2 className="h-5 w-5" />
+                </div>
+                <h3 className="font-bold text-slate-800 mb-2">{item.title}</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -230,13 +174,12 @@ export default function LandingPage() {
               </div>
               <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/60">
                 <ul className="space-y-4">
-                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Age:</b> 18 - 29 Years only. (Above 29 not eligible)</span></li>
-                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Gender:</b> Only Male candidates are eligible.</span></li>
-                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Minimum Qualification:</b> 10th Pass.</span></li>
-                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700">Must be able to read and understand basic English and/or the local language.</span></li>
-                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700">Must know how to use a smartphone and mobile applications.</span></li>
-                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700">Freshers and experienced candidates are welcome to apply.</span></li>
-                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700">Field sales, marketing, or customer acquisition experience is an added advantage.</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Gender:</b> Male Candidates Only</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Age:</b> 18 to 30 Years only. (Above 30 not eligible)</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Smartphone:</b> Must own a Smartphone</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Communication:</b> Good Communication Skills</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Customer Interaction:</b> Ability to interact confidently with customers</span></li>
+                  <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0 mt-0.5" /><span className="text-slate-700"><b>Location:</b> Willing to work in the assigned local area</span></li>
                 </ul>
               </div>
             </div>
@@ -252,9 +195,9 @@ export default function LandingPage() {
                   "Android Smartphone (Mandatory)", 
                   "Aadhaar Card", 
                   "PAN Card", 
+                  "Driving Licence",
                   "Bank Account Details", 
-                  "Passport Size Photograph", 
-                  "Any additional documents required by the company"
+                  "Passport Size Photograph"
                 ].map((item, i) => (
                   <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center shadow-sm">
                     <CheckCircle2 className="h-5 w-5 text-emerald-500 mr-3 shrink-0" />
@@ -300,11 +243,9 @@ export default function LandingPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  "Fixed Monthly Salary",
-                  "Attractive Performance-Based Incentives",
-                  "Career Growth Opportunities",
-                  "Training and Development Support",
-                  "Recognition and Performance Rewards"
+                  "Monthly Salary: ₹15,000 - ₹30,000",
+                  "Performance-based growth opportunities",
+                  "Training and support provided by the company"
                 ].map((item, i) => (
                   <div key={i} className="bg-primary/5 rounded-xl p-4 border border-primary/10 flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0" />
@@ -317,22 +258,20 @@ export default function LandingPage() {
 
         </div>
 
-        {/* KPIs & Working Conditions */}
+        {/* Important Notes & Working Conditions */}
         <div className="grid md:grid-cols-2 gap-8 mb-16">
           <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full pointer-events-none"></div>
             <h3 className="text-xl font-bold mb-6 flex items-center">
-              <Activity className="h-6 w-6 mr-3 text-purple-400" />
-              Key Performance Indicators (KPIs)
+              <FileText className="h-6 w-6 mr-3 text-purple-400" />
+              Important Notes
             </h3>
             <ul className="space-y-4">
               {[
-                "Number of app installations completed.",
-                "Number of successful user registrations.",
-                "User activation rate.",
-                "Daily and monthly target achievement.",
-                "Brand awareness activities conducted.",
-                "Quality and accuracy of registrations."
+                "This role does not require visiting shops.",
+                "Customer data and leads will be provided by the company.",
+                "The candidate's responsibility is to contact customers, guide them through KYC, and complete the onboarding process.",
+                "Only serious and interested candidates should apply."
               ].map((item, i) => (
                 <li key={i} className="flex items-start">
                   <ChevronRight className="h-5 w-5 text-purple-400 mr-2 shrink-0" />
@@ -349,10 +288,10 @@ export default function LandingPage() {
             </h3>
             <ul className="space-y-5">
               {[
-                "Field-based role involving outdoor activities.",
-                "Regular travel within the assigned territory.",
-                "Direct interaction with customers and the general public.",
-                "Six working days per week."
+                "Full-Time Role.",
+                "Working Days: Monday to Saturday.",
+                "Guidance & KYC completed over phone calls.",
+                "Local area operations and brand awareness creation."
               ].map((item, i) => (
                 <li key={i} className="flex items-start">
                   <div className="bg-emerald-100 p-1 rounded-full mr-4 shrink-0 mt-0.5">

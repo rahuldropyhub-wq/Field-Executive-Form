@@ -168,14 +168,14 @@ export default function RegistrationForm() {
   }
 
   async function onSubmit(values) {
-    // Validate age (18-29)
+    // Validate age (18-30)
     const age = calculateAge(values.date_of_birth)
     if (age === null || age < 18) {
       setAgeError("You must be at least 18 years old to apply.")
       return
     }
-    if (age > 29) {
-      setAgeError("Sorry, applicants above 29 years of age are not eligible.")
+    if (age > 30) {
+      setAgeError("Sorry, applicants above 30 years of age are not eligible.")
       return
     }
     setAgeError("")
@@ -434,8 +434,8 @@ export default function RegistrationForm() {
                                 const age = calculateAge(dob)
                                 if (age !== null && age < 18) {
                                   setAgeError("You must be at least 18 years old to apply.")
-                                } else if (age !== null && age > 29) {
-                                  setAgeError("Sorry, applicants above 29 years of age are not eligible.")
+                                } else if (age !== null && age > 30) {
+                                  setAgeError("Sorry, applicants above 30 years of age are not eligible.")
                                 }
                             } else {
                                 field.onChange(undefined);
