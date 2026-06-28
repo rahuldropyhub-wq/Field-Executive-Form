@@ -344,6 +344,51 @@ export default function Dashboard() {
           </div>
           
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <select
+              onChange={(e) => {
+                const val = e.target.value;
+                if (!val) return;
+                
+                const today = new Date();
+                let start, end;
+                if (val === "today") {
+                  start = new Date(today);
+                  end = new Date(today);
+                } else if (val === "yesterday") {
+                  start = new Date(today);
+                  start.setDate(start.getDate() - 1);
+                  end = new Date(start);
+                } else if (val === "day_before") {
+                  start = new Date(today);
+                  start.setDate(start.getDate() - 2);
+                  end = new Date(start);
+                }
+                
+                const formatDate = (date) => {
+                  const d = new Date(date);
+                  let month = '' + (d.getMonth() + 1);
+                  let day = '' + d.getDate();
+                  const year = d.getFullYear();
+                  if (month.length < 2) month = '0' + month;
+                  if (day.length < 2) day = '0' + day;
+                  return [year, month, day].join('-');
+                };
+                
+                setStartDate(formatDate(start));
+                setEndDate(formatDate(end));
+                e.target.value = ""; // reset dropdown
+              }}
+              className={cn(
+                "bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all",
+                isPhonePe ? "focus:ring-[#5f259f]/20 focus:border-[#5f259f]" : "focus:ring-[#00A896]/20 focus:border-[#00A896]"
+              )}
+            >
+              <option value="">Quick Date</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="day_before">Day Before Yesterday</option>
+            </select>
+
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <Filter className="h-4 w-4 text-slate-400 hidden sm:block" />
               <div className={cn(
@@ -395,7 +440,12 @@ export default function Dashboard() {
         {/* Data Table */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-50/50 gap-4">
-            <h2 className="font-semibold text-slate-800">{isPhonePe ? "PhonePe Applications" : "Tide Applications"}</h2>
+            <h2 className="font-semibold text-slate-800">
+              {isPhonePe ? "PhonePe Applications" : "Tide Applications"} 
+              <span className="ml-2 bg-slate-200 text-slate-700 py-0.5 px-2.5 rounded-full text-xs font-bold">
+                {filteredCandidates.length}
+              </span>
+            </h2>
             <div className="flex gap-2 sm:hidden w-full">
               <Button variant="outline" size="sm" onClick={exportToExcel} disabled={filteredCandidates.length === 0} className="flex-1">
                 <Download className="h-4 w-4 mr-2" /> Excel
