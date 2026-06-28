@@ -184,7 +184,7 @@ export default function Dashboard() {
           c.district || "N/A",
           c.documents_verified ? "✓ Yes" : "✗ No",
           c.location_address || "N/A",
-          new Date(c.created_at).toLocaleDateString()
+          new Date(c.created_at).toLocaleString()
         ]);
       });
 
@@ -536,7 +536,7 @@ export default function Dashboard() {
                         )}
                       </td>
                       <td className="px-6 py-4 text-slate-600 whitespace-nowrap">
-                        {new Date(candidate.created_at).toLocaleDateString()}
+                        {new Date(candidate.created_at).toLocaleString()}
                       </td>
                     </tr>
                   ))
@@ -558,7 +558,7 @@ export default function Dashboard() {
                       <p className="text-xs text-slate-500">{candidate.qualification}</p>
                     </div>
                     <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-md">
-                      {new Date(candidate.created_at).toLocaleDateString()}
+                      {new Date(candidate.created_at).toLocaleString()}
                     </span>
                   </div>
                   
