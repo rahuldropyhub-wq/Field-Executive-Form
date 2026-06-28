@@ -106,7 +106,14 @@ export default function Dashboard() {
     const sheetName = isPhonePe ? "PhonePe Candidates" : "Tide Candidates";
     XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
     
-    const dateStr = new Date().toISOString().split('T')[0];
+    const getFileDateSuffix = () => {
+      if (startDate && endDate) return startDate === endDate ? startDate : `${startDate}_to_${endDate}`;
+      if (startDate) return `${startDate}_onwards`;
+      if (endDate) return `up_to_${endDate}`;
+      return new Date().toISOString().split('T')[0];
+    };
+    
+    const dateStr = getFileDateSuffix();
     const fileName = isPhonePe 
       ? `PhonePe_Field_Executives_${dateStr}.xlsx` 
       : `Tide_Field_Executives_${dateStr}.xlsx`;
@@ -166,7 +173,12 @@ export default function Dashboard() {
       const dateStr = new Date().toLocaleDateString();
       doc.setFontSize(10);
       doc.setTextColor(100, 100, 100);
-      doc.text(`Generated on: ${dateStr}`, 14, 38);
+      
+      let filterText = "";
+      if (startDate && endDate) {
+        filterText = startDate === endDate ? ` (Filtered: ${startDate})` : ` (Filtered: ${startDate} to ${endDate})`;
+      }
+      doc.text(`Generated on: ${dateStr}${filterText}`, 14, 38);
 
       const tableColumn = ["Full Name", "Email", "Mobile", "Gender", "Qualification", "Experience", "DOB", "State", "District", "Docs", "Location", "Date Applied"];
       const tableRows = [];
@@ -200,7 +212,14 @@ export default function Dashboard() {
         alternateRowStyles: { fillColor: [248, 250, 252] }
       });
 
-      const dateStrFile = new Date().toISOString().split('T')[0];
+      const getFileDateSuffix = () => {
+        if (startDate && endDate) return startDate === endDate ? startDate : `${startDate}_to_${endDate}`;
+        if (startDate) return `${startDate}_onwards`;
+        if (endDate) return `up_to_${endDate}`;
+        return new Date().toISOString().split('T')[0];
+      };
+      
+      const dateStrFile = getFileDateSuffix();
       const pdfFileName = isPhonePe 
         ? `PhonePe_Field_Executives_${dateStrFile}.pdf` 
         : `Tide_Field_Executives_${dateStrFile}.pdf`;
