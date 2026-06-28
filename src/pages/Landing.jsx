@@ -133,57 +133,6 @@ export default function LandingPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         
-        {/* About the Role Video */}
-        <div className="mb-20 bg-white border border-slate-200/60 rounded-3xl p-6 md:p-10 shadow-xl">
-          <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 items-center">
-            
-            {/* Left side: Animated Text & Arrow */}
-            <div className="order-1 lg:order-1 lg:col-span-2 space-y-6 flex flex-col justify-center items-center lg:items-start text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-bold text-sm tracking-wide animate-pulse">
-                <Activity className="h-4 w-4" />
-                Job Description
-              </div>
-              
-              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight">
-                For more about the job description, <br className="hidden lg:block" /> check this video!
-              </h2>
-              
-              <div className="flex items-center gap-4 mt-6 text-primary">
-                {/* Arrow pointing Right (towards video on desktop) */}
-                <div className="hidden lg:flex items-center gap-4">
-                  <span className="text-xl font-black uppercase tracking-widest">Watch Now</span>
-                  <div className="bg-primary/10 p-3 rounded-full animate-bounce-x">
-                    <ArrowRight className="h-6 w-6" />
-                  </div>
-                </div>
-                {/* Arrow pointing Down (on mobile) */}
-                <div className="flex lg:hidden flex-col items-center gap-3 mt-4">
-                  <span className="text-xl font-black uppercase tracking-widest">Watch Now</span>
-                  <div className="bg-primary/10 p-3 rounded-full animate-bounce">
-                    <ArrowRight className="h-6 w-6 rotate-90" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right side: Video */}
-            <div className="order-2 lg:order-2 lg:col-span-3 rounded-2xl overflow-hidden shadow-lg border border-slate-100 bg-slate-50 p-2 w-full mx-auto lg:mr-0">
-              <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/5">
-                <iframe 
-                  className="absolute top-0 left-0 w-full h-full"
-                  src="https://www.youtube.com/embed/PuiYf2jBySA?si=BKefJlPEaIOi8oKW" 
-                  title="YouTube video player" 
-                  frameBorder="0" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                  referrerPolicy="strict-origin-when-cross-origin" 
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
-            
-          </div>
-        </div>
-
         {/* Key Responsibilities */}
         <div className="mb-20">
           <div className="flex items-center gap-3 mb-8">
