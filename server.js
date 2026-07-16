@@ -71,6 +71,25 @@ const initDB = async () => {
       );
     `;
     await pool.query(queryTide);
+    // Initialize Recruiter candidates table
+    const queryRecruiter = `
+      CREATE TABLE IF NOT EXISTS recruiter_candidates (
+          id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+          full_name TEXT NOT NULL,
+          email TEXT UNIQUE NOT NULL,
+          mobile_number TEXT UNIQUE NOT NULL,
+          qualification TEXT NOT NULL,
+          date_of_birth DATE NOT NULL,
+          state TEXT,
+          district TEXT,
+          gender TEXT,
+          laptop_mandatory BOOLEAN DEFAULT false,
+          documents_verified BOOLEAN DEFAULT false,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+      );
+    `;
+    await pool.query(queryRecruiter);
     
     console.log("Database initialized successfully.");
   } catch (err) {
@@ -192,6 +211,58 @@ app.get("/api/tide-candidates", async (req, res) => {
     res.status(200).json(rows);
   } catch (error) {
     console.error("Error fetching Tide candidates:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// API endpoint to submit a new Recruiter application
+app.post("/api/recruiter-candidates", async (req, res) => {
+  try {
+    const { 
+      full_name, email, mobile_number, qualification,
+      date_of_birth, state, district,
+      gender, laptop_mandatory, documents_verified
+    } = req.body;
+
+    const insertQuery = `
+      INSERT INTO recruiter_candidates (
+        full_name, email, mobile_number, qualification,
+        date_of_birth, state, district,
+        gender, laptop_mandatory, documents_verified
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+      RETURNING *;
+    `;
+    
+    const values = [
+      full_name, email, mobile_number, qualification,
+      date_of_birth, state, district,
+      gender || 'Female', laptop_mandatory || false, documents_verified || false
+    ];
+
+    const { rows } = await pool.query(insertQuery, values);
+    res.status(201).json(rows[0]);
+
+  } catch (error) {
+    console.error("Error inserting Recruiter candidate:", error);
+    if (error.code === '23505') { // unique violation
+      return res.status(409).json({ error: "Application with this email or mobile number already exists." });
+    }
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// API endpoint to fetch all Recruiter candidates (for admin panel)
+app.get("/api/recruiter-candidates", async (req, res) => {
+  try {
+    // Automatically delete Recruiter candidates older than 2 months
+    await pool.query("DELETE FROM recruiter_candidates WHERE created_at < NOW() - INTERVAL '2 months';");
+
+    // Fetch the remaining data
+    const { rows } = await pool.query("SELECT * FROM recruiter_candidates ORDER BY created_at DESC;");
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error fetching Recruiter candidates:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

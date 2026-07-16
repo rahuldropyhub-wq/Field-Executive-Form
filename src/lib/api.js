@@ -58,6 +58,35 @@ export const getTideCandidates = async () => {
   return result;
 }
 
+export const submitRecruiterApplication = async (data) => {
+  const response = await fetch('/api/recruiter-candidates', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to submit application");
+  }
+
+  return result;
+}
+
+export const getRecruiterCandidates = async () => {
+  const response = await fetch('/api/recruiter-candidates');
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to fetch candidates");
+  }
+
+  return result;
+}
+
 export const loginAdmin = async (email, password) => {
   const response = await fetch('/api/admin/login', {
     method: 'POST',

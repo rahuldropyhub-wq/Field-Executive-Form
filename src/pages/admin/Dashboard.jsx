@@ -4,14 +4,15 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Download, FileText, Users, MapPin, Calendar, Briefcase, Phone, Mail, Loader2, LogOut, Search, Filter } from "lucide-react";
-import { getCandidates, getTideCandidates } from "@/lib/api";
+import { getCandidates, getTideCandidates, getRecruiterCandidates } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function Dashboard() {
   const [phonepeCandidates, setPhonepeCandidates] = useState([]);
   const [tideCandidates, setTideCandidates] = useState([]);
-  const [activeTab, setActiveTab] = useState("phonepe"); // "phonepe" or "tide"
+  const [recruiterCandidates, setRecruiterCandidates] = useState([]);
+  const [activeTab, setActiveTab] = useState("phonepe"); // "phonepe", "tide", or "recruiter"
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,12 +34,14 @@ export default function Dashboard() {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const [pData, tData] = await Promise.all([
+      const [pData, tData, rData] = await Promise.all([
         getCandidates(),
-        getTideCandidates()
+        getTideCandidates(),
+        getRecruiterCandidates()
       ]);
       setPhonepeCandidates(pData);
       setTideCandidates(tData);
+      setRecruiterCandidates(rData);
     } catch (err) {
       setError(err.message || "Failed to fetch candidates");
     } finally {
@@ -47,7 +50,9 @@ export default function Dashboard() {
   };
 
   const isPhonePe = activeTab === "phonepe";
-  const currentCandidates = isPhonePe ? phonepeCandidates : tideCandidates;
+  const isTide = activeTab === "tide";
+  const isRecruiter = activeTab === "recruiter";
+  const currentCandidates = isPhonePe ? phonepeCandidates : (isTide ? tideCandidates : recruiterCandidates);
 
   const filteredCandidates = currentCandidates.filter((c) => {
     // Search filter
@@ -103,7 +108,7 @@ export default function Dashboard() {
 
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
     const workbook = XLSX.utils.book_new();
-    const sheetName = isPhonePe ? "PhonePe Candidates" : "Tide Candidates";
+    const sheetName = isPhonePe ? "PhonePe Candidates" : (isTide ? "Tide Candidates" : "Recruiter Candidates");
     XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
     
     const getFileDateSuffix = () => {
@@ -116,7 +121,7 @@ export default function Dashboard() {
     const dateStr = getFileDateSuffix();
     const fileName = isPhonePe 
       ? `PhonePe_Field_Executives_${dateStr}.xlsx` 
-      : `Tide_Field_Executives_${dateStr}.xlsx`;
+      : (isTide ? `Tide_Field_Executives_${dateStr}.xlsx` : `Recruiter_Candidates_${dateStr}.xlsx`);
     XLSX.writeFile(workbook, fileName);
   };
 
@@ -167,7 +172,7 @@ export default function Dashboard() {
       doc.setTextColor(40, 40, 40);
       const reportTitle = isPhonePe 
         ? "PhonePe Field Executives Application Report" 
-        : "Tide Field Executives Application Report";
+        : (isTide ? "Tide Field Executives Application Report" : "Recruiter Application Report");
       doc.text(reportTitle, 14, 32);
       
       const dateStr = new Date().toLocaleDateString();
@@ -222,7 +227,7 @@ export default function Dashboard() {
       const dateStrFile = getFileDateSuffix();
       const pdfFileName = isPhonePe 
         ? `PhonePe_Field_Executives_${dateStrFile}.pdf` 
-        : `Tide_Field_Executives_${dateStrFile}.pdf`;
+        : (isTide ? `Tide_Field_Executives_${dateStrFile}.pdf` : `Recruiter_Candidates_${dateStrFile}.pdf`);
       doc.save(pdfFileName);
     } catch (err) {
       console.error("Failed to generate PDF:", err);
@@ -287,7 +292,7 @@ export default function Dashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-center space-x-4">
             <div className="bg-purple-100 p-3 rounded-lg text-[#5f259f]">
               <Users className="h-6 w-6" />
@@ -306,10 +311,19 @@ export default function Dashboard() {
               <h3 className="text-2xl font-bold text-slate-900">{tideCandidates.length}</h3>
             </div>
           </div>
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-center space-x-4">
+            <div className="bg-blue-50 p-3 rounded-lg text-blue-600">
+              <Users className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-500">Recruiter Applications</p>
+              <h3 className="text-2xl font-bold text-slate-900">{recruiterCandidates.length}</h3>
+            </div>
+          </div>
         </div>
 
         {/* Module Switcher Tabs */}
-        <div className="flex border border-slate-200 mb-6 bg-white p-1.5 rounded-xl shadow-sm max-w-md">
+        <div className="flex border border-slate-200 mb-6 bg-white p-1.5 rounded-xl shadow-sm max-w-3xl">
           <button
             onClick={() => {
               setActiveTab("phonepe");
@@ -336,13 +350,30 @@ export default function Dashboard() {
             }}
             className={cn(
               "flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all flex items-center justify-center space-x-2",
-              !isPhonePe
+              isTide
                 ? "bg-[#0F2E59] text-white shadow-sm"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
             )}
           >
             <Users className="h-4 w-4 shrink-0 text-[#00A896]" />
             <span>Tide Module</span>
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("recruiter");
+              setSearchTerm("");
+              setStartDate("");
+              setEndDate("");
+            }}
+            className={cn(
+              "flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all flex items-center justify-center space-x-2",
+              isRecruiter
+                ? "bg-blue-600 text-white shadow-sm"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+            )}
+          >
+            <Briefcase className="h-4 w-4 shrink-0 text-blue-200" />
+            <span>Recruiters</span>
           </button>
         </div>
 
@@ -460,7 +491,7 @@ export default function Dashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-50/50 gap-4">
             <h2 className="font-semibold text-slate-800">
-              {isPhonePe ? "PhonePe Applications" : "Tide Applications"} 
+              {isPhonePe ? "PhonePe Applications" : (isTide ? "Tide Applications" : "Recruiter Applications")} 
               <span className="ml-2 bg-slate-200 text-slate-700 py-0.5 px-2.5 rounded-full text-xs font-bold">
                 {filteredCandidates.length}
               </span>

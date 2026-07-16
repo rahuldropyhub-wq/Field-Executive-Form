@@ -8,6 +8,8 @@ import TideLanding from "./pages/TideLanding"
 import TideRegistrationForm from "./pages/TideRegistrationForm"
 import Success from "./pages/Success"
 import QRCodeGenerator from "./pages/QRCodeGenerator"
+import RecruiterLanding from "./pages/RecruiterLanding"
+import RecruiterRegistrationForm from "./pages/RecruiterRegistrationForm"
 import AdminLogin from "./pages/admin/Login"
 import Dashboard from "./pages/admin/Dashboard"
 
@@ -22,6 +24,8 @@ function App() {
         <Route path="/register" element={isTideDomain ? <TideRegistrationForm /> : <RegistrationForm />} />
         <Route path="/tide" element={<TideLanding />} />
         <Route path="/tide-register" element={<TideRegistrationForm />} />
+        <Route path="/recruiter" element={<RecruiterLanding />} />
+        <Route path="/recruiter-register" element={<RecruiterRegistrationForm />} />
         <Route path="/success" element={<Success />} />
         <Route path="/qrcode" element={<QRCodeGenerator />} />
 
