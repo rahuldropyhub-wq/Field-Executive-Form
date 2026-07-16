@@ -15,13 +15,20 @@ import Dashboard from "./pages/admin/Dashboard"
 
 function App() {
   const isTideDomain = typeof window !== 'undefined' && window.location.hostname.includes("tide");
+  const isRecruiterDomain = typeof window !== 'undefined' && window.location.hostname.includes("recruiter");
 
   return (
     <Router>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={isTideDomain ? <TideLanding /> : <LandingPage />} />
-        <Route path="/register" element={isTideDomain ? <TideRegistrationForm /> : <RegistrationForm />} />
+        <Route path="/" element={
+          isRecruiterDomain ? <RecruiterLanding /> : 
+          isTideDomain ? <TideLanding /> : <LandingPage />
+        } />
+        <Route path="/register" element={
+          isRecruiterDomain ? <RecruiterRegistrationForm /> :
+          isTideDomain ? <TideRegistrationForm /> : <RegistrationForm />
+        } />
         <Route path="/tide" element={<TideLanding />} />
         <Route path="/tide-register" element={<TideRegistrationForm />} />
         <Route path="/recruiter" element={<RecruiterLanding />} />
