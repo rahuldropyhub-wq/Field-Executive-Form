@@ -296,40 +296,15 @@ export default function RecruiterRegistrationForm() {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel className="text-slate-300 font-semibold">Date of birth (18 to 28 Years Only)</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "h-11 bg-[#0a0f1c] border-slate-700 text-white justify-start text-left font-normal hover:bg-slate-800 hover:text-white",
-                              !field.value && "text-slate-500"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1950-01-01")
-                          }
-                          initialFocus
-                          captionLayout="dropdown-buttons"
-                          fromYear={1980}
-                          toYear={2015}
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                      <Input 
+                        type="date"
+                        className="bg-[#0a0f1c] border-slate-700 text-white h-11 [color-scheme:dark]"
+                        value={field.value ? format(field.value, 'yyyy-MM-dd') : ''}
+                        onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : undefined)}
+                        max={format(new Date(), 'yyyy-MM-dd')}
+                      />
+                    </FormControl>
                     <FormMessage />
                     {ageError && (
                       <p className="text-[0.8rem] font-medium text-destructive mt-1 flex items-center">
