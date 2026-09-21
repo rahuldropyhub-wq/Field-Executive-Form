@@ -678,31 +678,46 @@ export default function Dashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {candidate.resume_data ? (
-                            <div className="flex gap-2">
-                              <a 
-                                href={candidate.resume_data} 
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-blue-200 shadow-sm"
-                              >
-                                <ExternalLink className="h-3 w-3" /> View
-                              </a>
-                              <a 
-                                href={candidate.resume_data} 
-                                download={candidate.resume_filename || `resume-${candidate.full_name}.pdf`}
-                                className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-emerald-200 shadow-sm"
-                              >
-                                <Download className="h-3 w-3" /> Download
-                              </a>
-                            </div>
-                          ) : candidate.resume_filename ? (
-                            <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 w-fit">
-                              <FileText className="h-3 w-3" /> Uploaded (No Data)
-                            </span>
-                          ) : (
-                            <span className="bg-red-50 text-red-500 text-xs px-2.5 py-1 rounded-full">No Resume</span>
-                          )}
+                          {(() => {
+                            // resume_data may be a JSON string {viewUrl, downloadUrl} or a plain URL (legacy)
+                            let viewUrl = null, downloadUrl = null
+                            if (candidate.resume_data) {
+                              try {
+                                const parsed = JSON.parse(candidate.resume_data)
+                                viewUrl = parsed.viewUrl
+                                downloadUrl = parsed.downloadUrl
+                              } catch {
+                                // Legacy: plain URL stored directly
+                                viewUrl = candidate.resume_data
+                                downloadUrl = candidate.resume_data
+                              }
+                            }
+                            return viewUrl ? (
+                              <div className="flex gap-2">
+                                <a 
+                                  href={viewUrl} 
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-blue-200 shadow-sm"
+                                >
+                                  <ExternalLink className="h-3 w-3" /> View
+                                </a>
+                                <a 
+                                  href={downloadUrl} 
+                                  download={candidate.resume_filename || `resume-${candidate.full_name}.pdf`}
+                                  className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-emerald-200 shadow-sm"
+                                >
+                                  <Download className="h-3 w-3" /> Download
+                                </a>
+                              </div>
+                            ) : candidate.resume_filename ? (
+                              <span className="bg-amber-50 text-amber-600 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 w-fit">
+                                <FileText className="h-3 w-3" /> Old Record
+                              </span>
+                            ) : (
+                              <span className="bg-red-50 text-red-500 text-xs px-2.5 py-1 rounded-full">No Resume</span>
+                            )
+                          })()}
                         </td>
                         <td className="px-6 py-4 text-slate-600 whitespace-nowrap text-xs">
                           {new Date(candidate.created_at).toLocaleString()}

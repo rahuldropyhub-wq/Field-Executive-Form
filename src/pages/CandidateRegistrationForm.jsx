@@ -149,11 +149,11 @@ export default function CandidateRegistrationForm() {
     formData.append("file", file)
     formData.append("upload_preset", UPLOAD_PRESET)
     formData.append("folder", "resumes")
-    formData.append("access_mode", "public")          // ← make file publicly accessible
-    formData.append("resource_type", "raw")           // ← raw = for PDFs/docs
 
+    // Use the image endpoint — it supports PDFs and is publicly accessible
+    // (raw endpoint has free-plan access restrictions)
     const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/upload`,
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
       { method: "POST", body: formData }
     )
 
@@ -163,7 +163,14 @@ export default function CandidateRegistrationForm() {
     }
 
     const data = await response.json()
-    return data.secure_url
+    // Build a direct download URL using fl_attachment flag
+    const viewUrl = data.secure_url
+    const downloadUrl = data.secure_url.replace(
+      "/image/upload/",
+      "/image/upload/fl_attachment/"
+    )
+    // Return both URLs as a JSON string stored in resume_data
+    return JSON.stringify({ viewUrl, downloadUrl, filename: file.name })
   }
 
   // Resume file handling
