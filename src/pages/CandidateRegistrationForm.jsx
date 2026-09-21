@@ -141,36 +141,14 @@ export default function CandidateRegistrationForm() {
     setGithubRepos(updated)
   }
 
-  // Upload file directly to Cloudinary (bypasses Vercel payload limit)
-  const uploadToCloudinary = async (file) => {
-    const CLOUD_NAME = "q5ephkny"
-    const UPLOAD_PRESET = "dropy_resumes"
-    const formData = new FormData()
-    formData.append("file", file)
-    formData.append("upload_preset", UPLOAD_PRESET)
-    formData.append("folder", "resumes")
-
-    // Use the image endpoint — it supports PDFs and is publicly accessible
-    // (raw endpoint has free-plan access restrictions)
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-      { method: "POST", body: formData }
-    )
-
-    if (!response.ok) {
-      const err = await response.json()
-      throw new Error(err.error?.message || "Cloudinary upload failed.")
-    }
-
-    const data = await response.json()
-    // Build a direct download URL using fl_attachment flag
-    const viewUrl = data.secure_url
-    const downloadUrl = data.secure_url.replace(
-      "/image/upload/",
-      "/image/upload/fl_attachment/"
-    )
-    // Return both URLs as a JSON string stored in resume_data
-    return JSON.stringify({ viewUrl, downloadUrl, filename: file.name })
+  // Convert PDF file to Base64 string (no external service needed)
+  const readAsBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result) // result is "data:application/pdf;base64,..."
+      reader.onerror = () => reject(new Error("Failed to read the file. Please try again."))
+      reader.readAsDataURL(file)
+    })
   }
 
   // Resume file handling
@@ -251,16 +229,16 @@ export default function CandidateRegistrationForm() {
       const filteredProjects = projects.map((p) => p.trim()).filter(Boolean)
       const filteredRepos = githubRepos.map((r) => r.trim()).filter(Boolean)
 
-      // Step 1: Upload resume directly to Cloudinary
+      // Step 1: Convert resume PDF to Base64 (stored directly in DB)
       setIsUploading(true)
-      let cloudUrl = resumeCloudUrl
-      if (!cloudUrl) {
-        cloudUrl = await uploadToCloudinary(resumeFile)
-        setResumeCloudUrl(cloudUrl)
+      let base64Data = resumeCloudUrl
+      if (!base64Data) {
+        base64Data = await readAsBase64(resumeFile)
+        setResumeCloudUrl(base64Data)
       }
       setIsUploading(false)
 
-      // Step 2: Send only the lightweight URL to the database
+      // Step 2: Send Base64 PDF data to the server
       const payload = {
         full_name: values.full_name.trim(),
         email: values.email.trim().toLowerCase(),
@@ -270,7 +248,7 @@ export default function CandidateRegistrationForm() {
         projects: filteredProjects,
         github_repos: filteredRepos,
         resume_filename: resumeFile.name,
-        resume_data: cloudUrl,   // tiny URL, not base64
+        resume_data: base64Data,  // Base64 PDF string stored in DB
       }
 
       await submitDropyCandidateApplication(payload)
