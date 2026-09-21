@@ -343,6 +343,10 @@ export default function Dashboard() {
               <FileText className="h-4 w-4 mr-2" />
               PDF
             </Button>
+            <Button variant="ghost" size="sm" onClick={fetchData} className="text-slate-600 hover:text-indigo-600" title="Refresh data">
+              <Loader2 className={cn("h-4 w-4 sm:mr-2", isLoading && "animate-spin")} />
+              <span className="hidden sm:inline">Refresh</span>
+            </Button>
             <Button variant="ghost" size="sm" onClick={handleLogout} className="text-slate-600 hover:text-red-600">
               <LogOut className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Logout</span>
@@ -870,10 +874,32 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <div className="flex items-start">
-                        <FileText className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                        <FileText className="h-4 w-4 mr-2 text-slate-400 mt-0.5 shrink-0" />
                         <div>
-                          <p className="text-xs text-slate-400 font-medium">Resume</p>
-                          <p className="text-slate-700 text-xs">{candidate.resume_filename || "Not uploaded"}</p>
+                          <p className="text-xs text-slate-400 font-medium mb-1">Resume</p>
+                          {candidate.resume_data ? (
+                            <div className="flex gap-2">
+                              <a
+                                href={candidate.resume_data}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-blue-200"
+                              >
+                                <ExternalLink className="h-3 w-3" /> View
+                              </a>
+                              <a
+                                href={candidate.resume_data}
+                                download={candidate.resume_filename || `resume-${candidate.full_name}.pdf`}
+                                className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-emerald-200"
+                              >
+                                <Download className="h-3 w-3" /> Download
+                              </a>
+                            </div>
+                          ) : (
+                            <span className="text-slate-400 italic text-xs">
+                              {candidate.resume_filename ? `${candidate.resume_filename} (no URL)` : "Not uploaded"}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
