@@ -149,6 +149,8 @@ export default function CandidateRegistrationForm() {
     formData.append("file", file)
     formData.append("upload_preset", UPLOAD_PRESET)
     formData.append("folder", "resumes")
+    formData.append("access_mode", "public")          // ← make file publicly accessible
+    formData.append("resource_type", "raw")           // ← raw = for PDFs/docs
 
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/upload`,
