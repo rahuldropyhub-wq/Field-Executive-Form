@@ -674,10 +674,14 @@ export default function Dashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {candidate.resume_filename ? (
-                            <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 w-fit">
-                              <FileText className="h-3 w-3" /> Uploaded
-                            </span>
+                          {candidate.resume_data ? (
+                            <a 
+                              href={candidate.resume_data} 
+                              download={candidate.resume_filename || `resume-${candidate.full_name}.pdf`}
+                              className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 w-fit transition-colors shadow-sm border border-emerald-200"
+                            >
+                              <Download className="h-3.5 w-3.5" /> Download
+                            </a>
                           ) : (
                             <span className="bg-red-50 text-red-500 text-xs px-2.5 py-1 rounded-full">No Resume</span>
                           )}
