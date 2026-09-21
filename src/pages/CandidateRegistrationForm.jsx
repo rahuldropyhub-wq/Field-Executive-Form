@@ -143,8 +143,8 @@ export default function CandidateRegistrationForm() {
 
   // Upload file directly to Cloudinary (bypasses Vercel payload limit)
   const uploadToCloudinary = async (file) => {
-    const CLOUD_NAME = "dropy-hub" // <-- Your Cloudinary cloud name
-    const UPLOAD_PRESET = "dropy_resumes" // <-- Your unsigned upload preset name
+    const CLOUD_NAME = "q5ephkny"
+    const UPLOAD_PRESET = "dropy_resumes"
     const formData = new FormData()
     formData.append("file", file)
     formData.append("upload_preset", UPLOAD_PRESET)
