@@ -675,13 +675,27 @@ export default function Dashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {candidate.resume_data ? (
-                            <a 
-                              href={candidate.resume_data} 
-                              download={candidate.resume_filename || `resume-${candidate.full_name}.pdf`}
-                              className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 w-fit transition-colors shadow-sm border border-emerald-200"
-                            >
-                              <Download className="h-3.5 w-3.5" /> Download
-                            </a>
+                            <div className="flex gap-2">
+                              <a 
+                                href={candidate.resume_data} 
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-blue-200 shadow-sm"
+                              >
+                                <ExternalLink className="h-3 w-3" /> View
+                              </a>
+                              <a 
+                                href={candidate.resume_data} 
+                                download={candidate.resume_filename || `resume-${candidate.full_name}.pdf`}
+                                className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-emerald-200 shadow-sm"
+                              >
+                                <Download className="h-3 w-3" /> Download
+                              </a>
+                            </div>
+                          ) : candidate.resume_filename ? (
+                            <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 w-fit">
+                              <FileText className="h-3 w-3" /> Uploaded (No Data)
+                            </span>
                           ) : (
                             <span className="bg-red-50 text-red-500 text-xs px-2.5 py-1 rounded-full">No Resume</span>
                           )}

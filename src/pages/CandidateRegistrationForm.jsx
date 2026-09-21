@@ -30,8 +30,8 @@ import { submitDropyCandidateApplication } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
 const SUGGESTED_SKILLS = [
-  "React", "Node.js", "JavaScript", "TypeScript", "Python", 
-  "Tailwind CSS", "SQL", "PostgreSQL", "Next.js", "Express", "UI/UX Design", "Git"
+  "React", "Node.js", "JavaScript", "Python", "Django", "Flask", "FastAPI",
+  "TypeScript", "Tailwind CSS", "SQL", "PostgreSQL", "MongoDB", "Express", "Git"
 ]
 
 const formSchema = z.object({
