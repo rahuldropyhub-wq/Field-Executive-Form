@@ -149,8 +149,8 @@ export default function CandidateRegistrationForm() {
       return
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      setResumeError("File size exceeds the 5MB limit.")
+    if (file.size > 3 * 1024 * 1024) {
+      setResumeError("File size exceeds the 3MB limit.")
       return
     }
 
@@ -588,7 +588,7 @@ export default function CandidateRegistrationForm() {
                   <span className="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-50 text-indigo-600 font-bold text-xs">4</span>
                   <div className="flex-1">
                     <h2 className="text-base font-bold text-slate-900">Resume / CV <span className="text-red-500">*</span></h2>
-                    <p className="text-xs text-slate-500">Upload your latest resume in PDF format (Max 5MB).</p>
+                    <p className="text-xs text-slate-500">Upload your latest resume in PDF format (Max 3MB).</p>
                   </div>
                 </div>
 
@@ -612,7 +612,7 @@ export default function CandidateRegistrationForm() {
                       Click to upload or drag & drop
                     </p>
                     <p className="text-xs text-slate-500 mt-1">
-                      PDF files only (maximum size: 5MB)
+                      PDF files only (maximum size: 3MB)
                     </p>
                     <input
                       id="resume-input"
