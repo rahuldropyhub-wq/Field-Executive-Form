@@ -65,9 +65,14 @@ function App() {
 
 
         {/* Admin Routes */}
-        <Route path="/secure-portal" element={<Navigate to="/secure-portal/login" replace />} />
-        <Route path="/secure-portal/login" element={<AdminLogin />} />
-        <Route path="/secure-portal/dashboard" element={<Dashboard />} />
+        <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<Dashboard />} />
+        
+        {/* Legacy Admin Routes (Kept so old links still work) */}
+        <Route path="/secure-portal" element={<Navigate to="/admin/login" replace />} />
+        <Route path="/secure-portal/login" element={<Navigate to="/admin/login" replace />} />
+        <Route path="/secure-portal/dashboard" element={<Navigate to="/admin/dashboard" replace />} />
         
         {/* Catch all */}
         <Route path="*" element={<Navigate to="/" replace />} />

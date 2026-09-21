@@ -403,6 +403,51 @@ export default function CandidateLanding() {
         </div>
       </section>
 
+      {/* ─── Trust & Security Banner ─── */}
+      <section className="py-12 bg-emerald-50 border-y border-emerald-100">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-xl shadow-emerald-900/5 border border-emerald-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+            
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="flex-1 text-center md:text-left">
+                <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold mb-4">
+                  <Shield className="w-4 h-4" /> Official Dropyhub Guarantee
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">
+                  100% Free & Secure Jobs
+                </h2>
+                <p className="text-slate-600 text-sm leading-relaxed max-w-lg">
+                  We believe talent shouldn't pay to work. Once you pass the technical rounds and secure the job, you will be officially onboarded onto the <span className="font-bold text-slate-900">Dropyhub Payroll</span>.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-4 w-full md:w-auto">
+                <div className="flex items-center gap-4 bg-emerald-50/50 border border-emerald-100 p-4 rounded-2xl">
+                  <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
+                    <span className="text-xl font-black text-emerald-600">₹0</span>
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900">Zero Hidden Charges</p>
+                    <p className="text-xs text-slate-500">We never ask for placement fees.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 bg-emerald-50/50 border border-emerald-100 p-4 rounded-2xl">
+                  <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
+                    <Award className="w-6 h-6 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900">Direct Dropyhub Payroll</p>
+                    <p className="text-xs text-slate-500">Official employee status & benefits.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ─── Hiring Process ─── */}
       <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
