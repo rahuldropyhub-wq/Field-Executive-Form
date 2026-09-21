@@ -16,11 +16,12 @@ export default function Success() {
   
   const isTide = roleName.toLowerCase().includes("tide")
   const isRecruiter = isRecruiterDomain || roleName.toLowerCase().includes("recruiter")
+  const isCandidate = roleName.toLowerCase().includes("candidate") || roleName.toLowerCase().includes("dropy")
 
   return (
     <div className={cn(
       "min-h-screen flex flex-col items-center justify-center p-4",
-      isRecruiter ? "bg-[#0a0f1c]" : "bg-slate-50"
+      isRecruiter ? "bg-[#0a0f1c]" : isCandidate ? "bg-gradient-to-br from-indigo-50/50 via-white to-slate-50" : "bg-slate-50"
     )}>
       <div className={cn(
         "max-w-md w-full p-8 text-center",
@@ -31,11 +32,11 @@ export default function Success() {
         <div className="flex justify-center mb-6">
           <div className={cn(
             "rounded-full p-3",
-            isRecruiter ? "bg-cyan-500/10" : "bg-green-100"
+            isRecruiter ? "bg-cyan-500/10" : isCandidate ? "bg-indigo-100" : "bg-green-100"
           )}>
             <CheckCircle className={cn(
               "w-16 h-16",
-              isRecruiter ? "text-cyan-400" : "text-green-600"
+              isRecruiter ? "text-cyan-400" : isCandidate ? "text-indigo-600" : "text-green-600"
             )} />
           </div>
         </div>
@@ -60,7 +61,9 @@ export default function Success() {
               ? "bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white shadow-[0_0_20px_rgba(219,39,119,0.3)]"
               : isTide 
                 ? "bg-[#103FEF] hover:bg-[#0d34cc] text-white shadow-lg shadow-[#103FEF]/20" 
-                : "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
+                : isCandidate
+                  ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/20"
+                  : "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
           )}
         >
           Submit Another Application
@@ -69,3 +72,4 @@ export default function Success() {
     </div>
   )
 }
+

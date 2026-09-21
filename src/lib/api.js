@@ -102,8 +102,38 @@ export const loginAdmin = async (email, password) => {
   return result;
 }
 
+export const submitDropyCandidateApplication = async (data) => {
+  const response = await fetch('/api/dropy-candidates', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to submit candidate application");
+  }
+
+  return result;
+}
+
+export const getDropyCandidates = async () => {
+  const response = await fetch('/api/dropy-candidates');
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to fetch candidate applications");
+  }
+
+  return result;
+}
+
 // Optionally implement delete if needed later
 export const deleteCandidate = async (id) => {
   // Mocked for now since backend doesn't have a DELETE route yet
   console.log("Delete not implemented in API yet for ID:", id);
 }
+

@@ -3,16 +3,22 @@ import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { Download, FileText, Users, MapPin, Calendar, Briefcase, Phone, Mail, Loader2, LogOut, Search, Filter } from "lucide-react";
-import { getCandidates, getTideCandidates, getRecruiterCandidates } from "@/lib/api";
+import { Download, FileText, Users, MapPin, Calendar, Briefcase, Phone, Mail, Loader2, LogOut, Search, Filter, Code2, Globe, GitBranch, ExternalLink } from "lucide-react";
+import { getCandidates, getTideCandidates, getRecruiterCandidates, getDropyCandidates } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+const parseList = (val) => {
+  if (Array.isArray(val)) return val;
+  try { return JSON.parse(val || "[]"); } catch { return []; }
+};
 
 export default function Dashboard() {
   const [phonepeCandidates, setPhonepeCandidates] = useState([]);
   const [tideCandidates, setTideCandidates] = useState([]);
   const [recruiterCandidates, setRecruiterCandidates] = useState([]);
-  const [activeTab, setActiveTab] = useState("phonepe"); // "phonepe", "tide", or "recruiter"
+  const [dropyCandidates, setDropyCandidates] = useState([]);
+  const [activeTab, setActiveTab] = useState("phonepe"); // "phonepe", "tide", "recruiter", or "dropy"
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,14 +40,16 @@ export default function Dashboard() {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const [pData, tData, rData] = await Promise.all([
+      const [pData, tData, rData, dData] = await Promise.all([
         getCandidates(),
         getTideCandidates(),
-        getRecruiterCandidates()
+        getRecruiterCandidates(),
+        getDropyCandidates()
       ]);
       setPhonepeCandidates(pData);
       setTideCandidates(tData);
       setRecruiterCandidates(rData);
+      setDropyCandidates(dData);
     } catch (err) {
       setError(err.message || "Failed to fetch candidates");
     } finally {
@@ -52,14 +60,22 @@ export default function Dashboard() {
   const isPhonePe = activeTab === "phonepe";
   const isTide = activeTab === "tide";
   const isRecruiter = activeTab === "recruiter";
-  const currentCandidates = isPhonePe ? phonepeCandidates : (isTide ? tideCandidates : recruiterCandidates);
+  const isDropy = activeTab === "dropy";
+
+  const currentCandidates = isPhonePe 
+    ? phonepeCandidates 
+    : (isTide ? tideCandidates : (isRecruiter ? recruiterCandidates : dropyCandidates));
 
   const filteredCandidates = currentCandidates.filter((c) => {
     // Search filter
+    const searchLower = searchTerm.toLowerCase();
+    const skillsArray = parseList(c.skills);
     const matchesSearch = 
-      c.full_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      c.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      c.mobile_number.includes(searchTerm);
+      (c.full_name && c.full_name.toLowerCase().includes(searchLower)) || 
+      (c.email && c.email.toLowerCase().includes(searchLower)) || 
+      (c.mobile_number && c.mobile_number.includes(searchTerm)) ||
+      skillsArray.some((s) => typeof s === "string" && s.toLowerCase().includes(searchLower));
+
     
     // Date filter
     const appliedDate = new Date(c.created_at);
@@ -88,27 +104,40 @@ export default function Dashboard() {
     if (filteredCandidates.length === 0) return;
 
     // Formatting data for Excel
-    const dataToExport = filteredCandidates.map((c, index) => ({
-      "Application ID": `APP-${String(filteredCandidates.length - index).padStart(4, '0')}`,
-      "Full Name": c.full_name,
-      "Email Address": c.email,
-      "Mobile Number": c.mobile_number,
-      "Gender": c.gender || "N/A",
-      "Qualification": c.qualification,
-      "Previous Experience": c.previous_experience || "N/A",
-      "Date of Birth": c.date_of_birth,
-      "State": c.state || c.work_location || "N/A",
-      "District": c.district || "N/A",
-      "Documents Verified": c.documents_verified ? "Yes" : "No",
-      "GPS Latitude": c.latitude || "N/A",
-      "GPS Longitude": c.longitude || "N/A",
-      "Exact Address (Auto)": c.location_address || "N/A",
-      "Applied On": new Date(c.created_at).toLocaleString(),
-    }));
+    const dataToExport = isDropy 
+      ? filteredCandidates.map((c, index) => ({
+          "Application ID": `APP-DEV-${String(filteredCandidates.length - index).padStart(4, '0')}`,
+          "Full Name": c.full_name,
+          "Email Address": c.email,
+          "Mobile Number": c.mobile_number,
+          "LinkedIn": c.linkedin_url || "N/A",
+          "Technical Skills": parseList(c.skills).join(", "),
+          "Live Projects": parseList(c.projects).join(", "),
+          "GitHub Repositories": parseList(c.github_repos).join(", "),
+          "Resume Filename": c.resume_filename || "N/A",
+          "Applied On": new Date(c.created_at).toLocaleString(),
+        }))
+      : filteredCandidates.map((c, index) => ({
+          "Application ID": `APP-${String(filteredCandidates.length - index).padStart(4, '0')}`,
+          "Full Name": c.full_name,
+          "Email Address": c.email,
+          "Mobile Number": c.mobile_number,
+          "Gender": c.gender || "N/A",
+          "Qualification": c.qualification,
+          "Previous Experience": c.previous_experience || "N/A",
+          "Date of Birth": c.date_of_birth,
+          "State": c.state || c.work_location || "N/A",
+          "District": c.district || "N/A",
+          "Documents Verified": c.documents_verified ? "Yes" : "No",
+          "GPS Latitude": c.latitude || "N/A",
+          "GPS Longitude": c.longitude || "N/A",
+          "Exact Address (Auto)": c.location_address || "N/A",
+          "Applied On": new Date(c.created_at).toLocaleString(),
+        }));
 
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
     const workbook = XLSX.utils.book_new();
-    const sheetName = isPhonePe ? "PhonePe Candidates" : (isTide ? "Tide Candidates" : "Recruiter Candidates");
+    const sheetName = isPhonePe ? "PhonePe Candidates" : (isTide ? "Tide Candidates" : (isRecruiter ? "Recruiter Candidates" : "Dropy Candidates"));
     XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
     
     const getFileDateSuffix = () => {
@@ -121,7 +150,7 @@ export default function Dashboard() {
     const dateStr = getFileDateSuffix();
     const fileName = isPhonePe 
       ? `PhonePe_Field_Executives_${dateStr}.xlsx` 
-      : (isTide ? `Tide_Field_Executives_${dateStr}.xlsx` : `Recruiter_Candidates_${dateStr}.xlsx`);
+      : (isTide ? `Tide_Field_Executives_${dateStr}.xlsx` : (isRecruiter ? `Recruiter_Candidates_${dateStr}.xlsx` : `Dropy_Candidates_${dateStr}.xlsx`));
     XLSX.writeFile(workbook, fileName);
   };
 
@@ -157,7 +186,7 @@ export default function Dashboard() {
           doc.setFont("helvetica", "bold");
           doc.text("PhonePe", 14, 22);
         }
-      } else {
+      } else if (isTide) {
         // Draw Tide SVG / wordmark on PDF
         doc.setFontSize(22);
         doc.setTextColor(15, 46, 89); // Tide Navy
@@ -166,13 +195,23 @@ export default function Dashboard() {
         
         doc.setFillColor(0, 168, 150); // Tide Teal
         doc.circle(28, 18, 2, "F");
+      } else if (isRecruiter) {
+        doc.setFontSize(22);
+        doc.setTextColor(219, 39, 119);
+        doc.setFont("helvetica", "bold");
+        doc.text("Dropy Recruiter", 14, 22);
+      } else {
+        doc.setFontSize(22);
+        doc.setTextColor(79, 70, 229);
+        doc.setFont("helvetica", "bold");
+        doc.text("Dropy Hub", 14, 22);
       }
       
       doc.setFontSize(16);
       doc.setTextColor(40, 40, 40);
       const reportTitle = isPhonePe 
         ? "PhonePe Field Executives Application Report" 
-        : (isTide ? "Tide Field Executives Application Report" : "Recruiter Application Report");
+        : (isTide ? "Tide Field Executives Application Report" : (isRecruiter ? "Recruiter Application Report" : "Dropy Hub Technical Candidates Report"));
       doc.text(reportTitle, 14, 32);
       
       const dateStr = new Date().toLocaleDateString();
@@ -185,28 +224,45 @@ export default function Dashboard() {
       }
       doc.text(`Generated on: ${dateStr}${filterText}`, 14, 38);
 
-      const tableColumn = ["Full Name", "Email", "Mobile", "Gender", "Qualification", "Experience", "DOB", "State", "District", "Docs", "Location", "Date Applied"];
+      const tableColumn = isDropy
+        ? ["Full Name", "Email", "Mobile", "LinkedIn", "Skills", "Live Projects", "GitHub Repos", "Resume", "Date Applied"]
+        : ["Full Name", "Email", "Mobile", "Gender", "Qualification", "Experience", "DOB", "State", "District", "Docs", "Location", "Date Applied"];
+      
       const tableRows = [];
 
       filteredCandidates.forEach(c => {
-        tableRows.push([
-          c.full_name,
-          c.email,
-          c.mobile_number,
-          c.gender || "N/A",
-          c.qualification,
-          c.previous_experience || "N/A",
-          new Date(c.date_of_birth).toLocaleDateString(),
-          c.state || c.work_location || "N/A",
-          c.district || "N/A",
-          c.documents_verified ? "✓ Yes" : "✗ No",
-          c.location_address || "N/A",
-          new Date(c.created_at).toLocaleString()
-        ]);
+        if (isDropy) {
+          tableRows.push([
+            c.full_name,
+            c.email,
+            c.mobile_number,
+            c.linkedin_url || "N/A",
+            parseList(c.skills).join(", "),
+            parseList(c.projects).join(", "),
+            parseList(c.github_repos).join(", "),
+            c.resume_filename || (c.resume_data ? "PDF Available" : "N/A"),
+            new Date(c.created_at).toLocaleString()
+          ]);
+        } else {
+          tableRows.push([
+            c.full_name,
+            c.email,
+            c.mobile_number,
+            c.gender || "N/A",
+            c.qualification,
+            c.previous_experience || "N/A",
+            new Date(c.date_of_birth).toLocaleDateString(),
+            c.state || c.work_location || "N/A",
+            c.district || "N/A",
+            c.documents_verified ? "✓ Yes" : "✗ No",
+            c.location_address || "N/A",
+            new Date(c.created_at).toLocaleString()
+          ]);
+        }
       });
 
-      // PhonePe Purple vs Tide Navy
-      const primaryColor = isPhonePe ? [95, 37, 159] : [15, 46, 89];
+      // Color scheme
+      const primaryColor = isPhonePe ? [95, 37, 159] : (isTide ? [15, 46, 89] : (isRecruiter ? [219, 39, 119] : [79, 70, 229]));
 
       autoTable(doc, {
         head: [tableColumn],
@@ -227,7 +283,7 @@ export default function Dashboard() {
       const dateStrFile = getFileDateSuffix();
       const pdfFileName = isPhonePe 
         ? `PhonePe_Field_Executives_${dateStrFile}.pdf` 
-        : (isTide ? `Tide_Field_Executives_${dateStrFile}.pdf` : `Recruiter_Candidates_${dateStrFile}.pdf`);
+        : (isTide ? `Tide_Field_Executives_${dateStrFile}.pdf` : (isRecruiter ? `Recruiter_Candidates_${dateStrFile}.pdf` : `Dropy_Candidates_${dateStrFile}.pdf`));
       doc.save(pdfFileName);
     } catch (err) {
       console.error("Failed to generate PDF:", err);
@@ -251,8 +307,15 @@ export default function Dashboard() {
           <div className="flex items-center space-x-4">
             {isPhonePe ? (
               <img src="/phonepe-logo.svg" alt="PhonePe Logo" className="h-8" />
-            ) : (
+            ) : isTide ? (
               <img src="/tide-logo.png" alt="Tide Logo" className="h-12 w-auto object-contain rounded-md" />
+            ) : (
+              <img 
+                src="/dropy-logo.png" 
+                alt="Dropy Logo" 
+                className="h-10 w-auto object-contain rounded-md" 
+                onError={(e) => { e.currentTarget.src = "/dropyhub-logo.jpg"; }} 
+              />
             )}
             <h1 className="text-xl font-bold text-slate-800 border-l border-slate-200 pl-4">Admin Dashboard</h1>
           </div>
@@ -274,7 +337,7 @@ export default function Dashboard() {
               disabled={filteredCandidates.length === 0} 
               className={cn(
                 "hidden sm:flex border-red-200 hover:bg-red-50",
-                isPhonePe ? "text-red-600" : "text-rose-600"
+                isPhonePe ? "text-red-600" : isTide ? "text-teal-700" : isRecruiter ? "text-rose-600" : "text-indigo-600"
               )}
             >
               <FileText className="h-4 w-4 mr-2" />
@@ -292,7 +355,7 @@ export default function Dashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-center space-x-4">
             <div className="bg-purple-100 p-3 rounded-lg text-[#5f259f]">
               <Users className="h-6 w-6" />
@@ -320,10 +383,19 @@ export default function Dashboard() {
               <h3 className="text-2xl font-bold text-slate-900">{recruiterCandidates.length}</h3>
             </div>
           </div>
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex items-center space-x-4">
+            <div className="bg-indigo-50 p-3 rounded-lg text-indigo-600">
+              <Code2 className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-500">Dropy Candidates</p>
+              <h3 className="text-2xl font-bold text-slate-900">{dropyCandidates.length}</h3>
+            </div>
+          </div>
         </div>
 
         {/* Module Switcher Tabs */}
-        <div className="flex border border-slate-200 mb-6 bg-white p-1.5 rounded-xl shadow-sm max-w-3xl">
+        <div className="flex border border-slate-200 mb-6 bg-white p-1.5 rounded-xl shadow-sm max-w-4xl flex-wrap sm:flex-nowrap gap-1">
           <button
             onClick={() => {
               setActiveTab("phonepe");
@@ -332,14 +404,14 @@ export default function Dashboard() {
               setEndDate("");
             }}
             className={cn(
-              "flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all flex items-center justify-center space-x-2",
+              "flex-1 py-2.5 px-3 rounded-lg font-semibold text-xs sm:text-sm transition-all flex items-center justify-center space-x-1.5",
               isPhonePe
                 ? "bg-[#5f259f] text-white shadow-sm"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
             )}
           >
             <Users className="h-4 w-4 shrink-0" />
-            <span>PhonePe Module</span>
+            <span>PhonePe</span>
           </button>
           <button
             onClick={() => {
@@ -349,14 +421,14 @@ export default function Dashboard() {
               setEndDate("");
             }}
             className={cn(
-              "flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all flex items-center justify-center space-x-2",
+              "flex-1 py-2.5 px-3 rounded-lg font-semibold text-xs sm:text-sm transition-all flex items-center justify-center space-x-1.5",
               isTide
                 ? "bg-[#0F2E59] text-white shadow-sm"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
             )}
           >
             <Users className="h-4 w-4 shrink-0 text-[#00A896]" />
-            <span>Tide Module</span>
+            <span>Tide</span>
           </button>
           <button
             onClick={() => {
@@ -366,14 +438,31 @@ export default function Dashboard() {
               setEndDate("");
             }}
             className={cn(
-              "flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm transition-all flex items-center justify-center space-x-2",
+              "flex-1 py-2.5 px-3 rounded-lg font-semibold text-xs sm:text-sm transition-all flex items-center justify-center space-x-1.5",
               isRecruiter
                 ? "bg-blue-600 text-white shadow-sm"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
             )}
           >
-            <Briefcase className="h-4 w-4 shrink-0 text-blue-200" />
+            <Briefcase className="h-4 w-4 shrink-0" />
             <span>Recruiters</span>
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("dropy");
+              setSearchTerm("");
+              setStartDate("");
+              setEndDate("");
+            }}
+            className={cn(
+              "flex-1 py-2.5 px-3 rounded-lg font-semibold text-xs sm:text-sm transition-all flex items-center justify-center space-x-1.5",
+              isDropy
+                ? "bg-indigo-600 text-white shadow-sm"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+            )}
+          >
+            <Code2 className="h-4 w-4 shrink-0 text-indigo-300" />
+            <span>Dropy Candidates</span>
           </button>
         </div>
 
@@ -383,15 +472,16 @@ export default function Dashboard() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <input 
               type="text" 
-              placeholder={`Search ${isPhonePe ? "PhonePe" : "Tide"} candidates...`}
+              placeholder={`Search ${isPhonePe ? "PhonePe" : isTide ? "Tide" : isRecruiter ? "Recruiter" : "Dropy candidate"} name, email, skills...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className={cn(
                 "w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 transition-all",
-                isPhonePe ? "focus:ring-[#5f259f]/20 focus:border-[#5f259f]" : "focus:ring-[#00A896]/20 focus:border-[#00A896]"
+                isPhonePe ? "focus:ring-[#5f259f]/20 focus:border-[#5f259f]" : isTide ? "focus:ring-[#00A896]/20 focus:border-[#00A896]" : isRecruiter ? "focus:ring-blue-500/20 focus:border-blue-500" : "focus:ring-indigo-500/20 focus:border-indigo-500"
               )}
             />
           </div>
+
           
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
             <select
@@ -491,7 +581,7 @@ export default function Dashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-50/50 gap-4">
             <h2 className="font-semibold text-slate-800">
-              {isPhonePe ? "PhonePe Applications" : (isTide ? "Tide Applications" : "Recruiter Applications")} 
+              {isPhonePe ? "PhonePe Applications" : isTide ? "Tide Applications" : isRecruiter ? "Recruiter Applications" : "Dropy Developer Applications"}
               <span className="ml-2 bg-slate-200 text-slate-700 py-0.5 px-2.5 rounded-full text-xs font-bold">
                 {filteredCandidates.length}
               </span>
@@ -507,92 +597,188 @@ export default function Dashboard() {
           </div>
           
           <div className="overflow-x-auto hidden md:block">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
-                <tr>
-                  <th className="px-6 py-4 whitespace-nowrap">Full Name</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Email</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Mobile Number</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Gender</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Qualification</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Experience</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Date of Birth</th>
-                  <th className="px-6 py-4 whitespace-nowrap">State</th>
-                  <th className="px-6 py-4 whitespace-nowrap">District</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Documents</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Captured Location</th>
-                  <th className="px-6 py-4 whitespace-nowrap">Date Applied</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredCandidates.length === 0 ? (
+            {isDropy ? (
+              /* ── Dropy Developer Candidates Table ── */
+              <table className="w-full text-sm text-left">
+                <thead className="bg-indigo-50 text-indigo-700 font-medium border-b border-indigo-100">
                   <tr>
-                    <td colSpan="12" className="px-6 py-8 text-center text-slate-500">
-                      No applications match your filters.
-                    </td>
+                    <th className="px-6 py-4 whitespace-nowrap">#</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Full Name</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Email</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Mobile</th>
+                    <th className="px-6 py-4 whitespace-nowrap">LinkedIn</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Skills</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Live Projects</th>
+                    <th className="px-6 py-4 whitespace-nowrap">GitHub Repos</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Resume</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Applied On</th>
                   </tr>
-                ) : (
-                  filteredCandidates.map((candidate) => (
-                    <tr key={candidate.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-900">
-                        {candidate.full_name}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-600">
-                        {candidate.email}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-600">
-                        {candidate.mobile_number}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={cn(
-                          "text-xs font-semibold px-2.5 py-1 rounded-full",
-                          isPhonePe ? "bg-purple-50 text-purple-700" : "bg-teal-50 text-teal-700"
-                        )}>
-                          {candidate.gender || "N/A"}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-600">
-                        {candidate.qualification}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-600">
-                        {candidate.previous_experience || "N/A"}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-600">
-                        {new Date(candidate.date_of_birth).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-600">
-                        {candidate.state || candidate.work_location}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-600">
-                        {candidate.district || "N/A"}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {candidate.documents_verified ? (
-                          <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">✓ Verified</span>
-                        ) : (
-                          <span className="bg-red-50 text-red-600 text-xs font-semibold px-2.5 py-1 rounded-full">✗ No</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 min-w-[250px]">
-                        {candidate.location_address ? (
-                          <div className="flex items-start text-slate-600">
-                            <MapPin className="h-4 w-4 mr-2 text-emerald-600 shrink-0 mt-0.5" /> 
-                            <span className="line-clamp-2" title={candidate.location_address}>
-                              {candidate.location_address}
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="text-slate-400 italic">No GPS Data</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-slate-600 whitespace-nowrap">
-                        {new Date(candidate.created_at).toLocaleString()}
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredCandidates.length === 0 ? (
+                    <tr>
+                      <td colSpan="10" className="px-6 py-8 text-center text-slate-500">
+                        No developer applications match your filters.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    filteredCandidates.map((candidate, idx) => (
+                      <tr key={candidate.id} className="hover:bg-indigo-50/30 transition-colors">
+                        <td className="px-6 py-4 text-slate-400 text-xs font-mono">
+                          {String(filteredCandidates.length - idx).padStart(4, '0')}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold text-slate-900">
+                          {candidate.full_name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                          <a href={`mailto:${candidate.email}`} className="hover:text-indigo-600 hover:underline">{candidate.email}</a>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                          {candidate.mobile_number}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {candidate.linkedin_url ? (
+                            <a href={candidate.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-indigo-600 hover:text-indigo-800 hover:underline text-xs">
+                              <ExternalLink className="h-3 w-3" /> LinkedIn
+                            </a>
+                          ) : <span className="text-slate-400 italic text-xs">N/A</span>}
+                        </td>
+                        <td className="px-6 py-4 max-w-[200px]">
+                          <div className="flex flex-wrap gap-1">
+                            {parseList(candidate.skills).slice(0, 4).map((s, i) => (
+                              <span key={i} className="bg-indigo-100 text-indigo-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">{s}</span>
+                            ))}
+                            {parseList(candidate.skills).length > 4 && (
+                              <span className="bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-full">+{parseList(candidate.skills).length - 4}</span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 max-w-[180px]">
+                          <div className="flex flex-col gap-1">
+                            {parseList(candidate.projects).filter(Boolean).map((p, i) => (
+                              <a key={i} href={p} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-slate-600 hover:text-indigo-600 hover:underline truncate max-w-[160px]">
+                                <Globe className="h-3 w-3 shrink-0" />{p.replace(/^https?:\/\//,'')}
+                              </a>
+                            ))}
+                            {parseList(candidate.projects).filter(Boolean).length === 0 && <span className="text-slate-400 italic text-xs">None</span>}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 max-w-[180px]">
+                          <div className="flex flex-col gap-1">
+                            {parseList(candidate.github_repos).filter(Boolean).map((r, i) => (
+                              <a key={i} href={r} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-slate-600 hover:text-indigo-600 hover:underline truncate max-w-[160px]">
+                                <GitBranch className="h-3 w-3 shrink-0" />{r.replace(/^https?:\/\/(www\.)?github\.com\//,'')}
+                              </a>
+                            ))}
+                            {parseList(candidate.github_repos).filter(Boolean).length === 0 && <span className="text-slate-400 italic text-xs">None</span>}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {candidate.resume_filename ? (
+                            <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 w-fit">
+                              <FileText className="h-3 w-3" /> Uploaded
+                            </span>
+                          ) : (
+                            <span className="bg-red-50 text-red-500 text-xs px-2.5 py-1 rounded-full">No Resume</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-slate-600 whitespace-nowrap text-xs">
+                          {new Date(candidate.created_at).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            ) : (
+              /* ── PhonePe / Tide / Recruiter Field Executive Table ── */
+              <table className="w-full text-sm text-left">
+                <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
+                  <tr>
+                    <th className="px-6 py-4 whitespace-nowrap">Full Name</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Email</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Mobile Number</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Gender</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Qualification</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Experience</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Date of Birth</th>
+                    <th className="px-6 py-4 whitespace-nowrap">State</th>
+                    <th className="px-6 py-4 whitespace-nowrap">District</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Documents</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Captured Location</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Date Applied</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredCandidates.length === 0 ? (
+                    <tr>
+                      <td colSpan="12" className="px-6 py-8 text-center text-slate-500">
+                        No applications match your filters.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredCandidates.map((candidate) => (
+                      <tr key={candidate.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-900">
+                          {candidate.full_name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                          {candidate.email}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                          {candidate.mobile_number}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={cn(
+                            "text-xs font-semibold px-2.5 py-1 rounded-full",
+                            isPhonePe ? "bg-purple-50 text-purple-700" : "bg-teal-50 text-teal-700"
+                          )}>
+                            {candidate.gender || "N/A"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                          {candidate.qualification}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                          {candidate.previous_experience || "N/A"}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                          {new Date(candidate.date_of_birth).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                          {candidate.state || candidate.work_location}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                          {candidate.district || "N/A"}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {candidate.documents_verified ? (
+                            <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">✓ Verified</span>
+                          ) : (
+                            <span className="bg-red-50 text-red-600 text-xs font-semibold px-2.5 py-1 rounded-full">✗ No</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 min-w-[250px]">
+                          {candidate.location_address ? (
+                            <div className="flex items-start text-slate-600">
+                              <MapPin className="h-4 w-4 mr-2 text-emerald-600 shrink-0 mt-0.5" />
+                              <span className="line-clamp-2" title={candidate.location_address}>
+                                {candidate.location_address}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-slate-400 italic">No GPS Data</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-slate-600 whitespace-nowrap">
+                          {new Date(candidate.created_at).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
 
           {/* Mobile Card View */}
@@ -605,71 +791,135 @@ export default function Dashboard() {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h3 className="font-bold text-slate-900 text-base">{candidate.full_name}</h3>
-                      <p className="text-xs text-slate-500">{candidate.qualification}</p>
+                      <p className="text-xs text-slate-500">
+                        {isDropy ? candidate.email : candidate.qualification}
+                      </p>
                     </div>
                     <span className="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded-md">
                       {new Date(candidate.created_at).toLocaleString()}
                     </span>
                   </div>
-                  
-                  <div className="grid grid-cols-1 gap-y-3 mt-4 text-sm">
-                    <div className="flex items-start text-slate-600">
-                      <Phone className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-slate-400 font-medium">Mobile Number</p>
-                        <p className="text-slate-700">{candidate.mobile_number}</p>
+
+                  {isDropy ? (
+                    /* ── Dropy mobile card ── */
+                    <div className="grid grid-cols-1 gap-y-3 mt-4 text-sm">
+                      <div className="flex items-start text-slate-600">
+                        <Phone className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium">Mobile</p>
+                          <p className="text-slate-700">{candidate.mobile_number}</p>
+                        </div>
+                      </div>
+                      {candidate.linkedin_url && (
+                        <div className="flex items-start text-slate-600">
+                          <ExternalLink className="h-4 w-4 mr-2 text-indigo-400 mt-0.5" />
+                          <div>
+                            <p className="text-xs text-slate-400 font-medium">LinkedIn</p>
+                            <a href={candidate.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline break-all text-xs">{candidate.linkedin_url}</a>
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex items-start">
+                        <Code2 className="h-4 w-4 mr-2 text-indigo-400 mt-0.5 shrink-0" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium mb-1">Skills</p>
+                          <div className="flex flex-wrap gap-1">
+                            {parseList(candidate.skills).map((s, i) => (
+                              <span key={i} className="bg-indigo-100 text-indigo-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">{s}</span>
+                            ))}
+                            {parseList(candidate.skills).length === 0 && <span className="text-slate-400 italic text-xs">None listed</span>}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-start">
+                        <Globe className="h-4 w-4 mr-2 text-emerald-500 mt-0.5 shrink-0" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium mb-1">Live Projects</p>
+                          {parseList(candidate.projects).filter(Boolean).map((p, i) => (
+                            <a key={i} href={p} target="_blank" rel="noopener noreferrer" className="block text-xs text-indigo-600 hover:underline break-all">{p}</a>
+                          ))}
+                          {parseList(candidate.projects).filter(Boolean).length === 0 && <span className="text-slate-400 italic text-xs">None</span>}
+                        </div>
+                      </div>
+                      <div className="flex items-start">
+                        <GitBranch className="h-4 w-4 mr-2 text-slate-500 mt-0.5 shrink-0" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium mb-1">GitHub Repos</p>
+                          {parseList(candidate.github_repos).filter(Boolean).map((r, i) => (
+                            <a key={i} href={r} target="_blank" rel="noopener noreferrer" className="block text-xs text-indigo-600 hover:underline break-all">{r}</a>
+                          ))}
+                          {parseList(candidate.github_repos).filter(Boolean).length === 0 && <span className="text-slate-400 italic text-xs">None</span>}
+                        </div>
+                      </div>
+                      <div className="flex items-start">
+                        <FileText className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium">Resume</p>
+                          <p className="text-slate-700 text-xs">{candidate.resume_filename || "Not uploaded"}</p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-start text-slate-600">
-                      <Mail className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-slate-400 font-medium">Email Address</p>
-                        <p className="text-slate-700 break-all">{candidate.email}</p>
+                  ) : (
+                    /* ── Field Executive mobile card ── */
+                    <div className="grid grid-cols-1 gap-y-3 mt-4 text-sm">
+                      <div className="flex items-start text-slate-600">
+                        <Phone className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium">Mobile Number</p>
+                          <p className="text-slate-700">{candidate.mobile_number}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start text-slate-600">
+                        <Mail className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium">Email Address</p>
+                          <p className="text-slate-700 break-all">{candidate.email}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start text-slate-600">
+                        <Users className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium">Gender</p>
+                          <p className="text-slate-700">{candidate.gender || "N/A"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start text-slate-600">
+                        <Calendar className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium">Date of Birth</p>
+                          <p className="text-slate-700">{new Date(candidate.date_of_birth).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start text-slate-600">
+                        <Briefcase className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium">Previous Experience</p>
+                          <p className="text-slate-700">{candidate.previous_experience || "N/A"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start text-slate-600">
+                        <MapPin className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium">Location</p>
+                          <p className="text-slate-700">{candidate.district ? `${candidate.district}, ${candidate.state}` : candidate.work_location}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start text-slate-600">
+                        <FileText className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium">Documents Verified</p>
+                          <p className="text-slate-700">{candidate.documents_verified ? "✓ Yes" : "✗ No"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start text-slate-600 bg-slate-50 p-3 rounded-xl mt-2 border border-slate-100">
+                        <MapPin className="h-4 w-4 mr-2 text-emerald-500 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium mb-0.5">Captured Location</p>
+                          <p className="text-slate-700 text-xs leading-relaxed">{candidate.location_address || "No GPS Data"}</p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-start text-slate-600">
-                      <Users className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-slate-400 font-medium">Gender</p>
-                        <p className="text-slate-700">{candidate.gender || "N/A"}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start text-slate-600">
-                      <Calendar className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-slate-400 font-medium">Date of Birth</p>
-                        <p className="text-slate-700">{new Date(candidate.date_of_birth).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start text-slate-600">
-                      <Briefcase className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-slate-400 font-medium">Previous Experience</p>
-                        <p className="text-slate-700">{candidate.previous_experience || "N/A"}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start text-slate-600">
-                      <MapPin className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-slate-400 font-medium">Location</p>
-                        <p className="text-slate-700">{candidate.district ? `${candidate.district}, ${candidate.state}` : candidate.work_location}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start text-slate-600">
-                      <FileText className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-slate-400 font-medium">Documents Verified</p>
-                        <p className="text-slate-700">{candidate.documents_verified ? "✓ Yes" : "✗ No"}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start text-slate-600 bg-slate-50 p-3 rounded-xl mt-2 border border-slate-100">
-                      <MapPin className="h-4 w-4 mr-2 text-emerald-500 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-slate-400 font-medium mb-0.5">Captured Location</p>
-                        <p className="text-slate-700 text-xs leading-relaxed">{candidate.location_address || "No GPS Data"}</p>
-                      </div>
-                    </div>
-                  </div>
+                  )}
                 </div>
               ))
             )}

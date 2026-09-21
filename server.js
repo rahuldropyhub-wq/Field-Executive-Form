@@ -8,7 +8,8 @@ dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
+
 
 // Initialize PostgreSQL connection pool using Neon DB URL
 const pool = new Pool({
@@ -91,6 +92,25 @@ const initDB = async () => {
     `;
     await pool.query(queryRecruiter);
     
+    // Initialize Dropy Hub technical candidates table
+    const queryDropy = `
+      CREATE TABLE IF NOT EXISTS dropy_candidates (
+          id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+          full_name TEXT NOT NULL,
+          email TEXT UNIQUE NOT NULL,
+          mobile_number TEXT UNIQUE NOT NULL,
+          linkedin_url TEXT,
+          skills JSONB DEFAULT '[]'::jsonb,
+          projects JSONB DEFAULT '[]'::jsonb,
+          github_repos JSONB DEFAULT '[]'::jsonb,
+          resume_filename TEXT,
+          resume_data TEXT,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+      );
+    `;
+    await pool.query(queryDropy);
+
     console.log("Database initialized successfully.");
   } catch (err) {
     console.error("Error initializing database:", err);
@@ -263,6 +283,68 @@ app.get("/api/recruiter-candidates", async (req, res) => {
     res.status(200).json(rows);
   } catch (error) {
     console.error("Error fetching Recruiter candidates:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// API endpoint to submit a new Dropy Candidate application
+app.post("/api/dropy-candidates", async (req, res) => {
+  try {
+    const { 
+      full_name, email, mobile_number, linkedin_url,
+      skills, projects, github_repos,
+      resume_filename, resume_data
+    } = req.body;
+
+    if (!full_name || !email || !mobile_number) {
+      return res.status(400).json({ error: "Full Name, Email, and Mobile Number are required." });
+    }
+
+    const insertQuery = `
+      INSERT INTO dropy_candidates (
+        full_name, email, mobile_number, linkedin_url,
+        skills, projects, github_repos,
+        resume_filename, resume_data
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+      RETURNING id, full_name, email, mobile_number, linkedin_url, skills, projects, github_repos, resume_filename, created_at;
+    `;
+    
+    const values = [
+      full_name,
+      email,
+      mobile_number,
+      linkedin_url || null,
+      JSON.stringify(skills || []),
+      JSON.stringify(projects || []),
+      JSON.stringify(github_repos || []),
+      resume_filename || null,
+      resume_data || null
+    ];
+
+    const { rows } = await pool.query(insertQuery, values);
+    res.status(201).json(rows[0]);
+
+  } catch (error) {
+    console.error("Error inserting Dropy candidate:", error);
+    if (error.code === '23505') { // unique violation
+      return res.status(409).json({ error: "Application with this email or mobile number already exists." });
+    }
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// API endpoint to fetch all Dropy candidates (for admin panel)
+app.get("/api/dropy-candidates", async (req, res) => {
+  try {
+    // Automatically delete Dropy candidates older than 2 months
+    await pool.query("DELETE FROM dropy_candidates WHERE created_at < NOW() - INTERVAL '2 months';");
+
+    // Fetch the remaining data (including resume for viewing/download)
+    const { rows } = await pool.query("SELECT * FROM dropy_candidates ORDER BY created_at DESC;");
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error fetching Dropy candidates:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
