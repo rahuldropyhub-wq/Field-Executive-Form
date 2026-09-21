@@ -66,9 +66,10 @@ export default function CandidateRegistrationForm() {
 
   // Resume state
   const [resumeFile, setResumeFile] = useState(null)
-  const [resumeBase64, setResumeBase64] = useState(null)
+  const [resumeCloudUrl, setResumeCloudUrl] = useState(null)
   const [resumeError, setResumeError] = useState("")
   const [isDragging, setIsDragging] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
 
   useEffect(() => {
     document.title = "Candidate Application | Dropy Hub"
@@ -140,6 +141,29 @@ export default function CandidateRegistrationForm() {
     setGithubRepos(updated)
   }
 
+  // Upload file directly to Cloudinary (bypasses Vercel payload limit)
+  const uploadToCloudinary = async (file) => {
+    const CLOUD_NAME = "dropy-hub" // <-- Your Cloudinary cloud name
+    const UPLOAD_PRESET = "dropy_resumes" // <-- Your unsigned upload preset name
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("upload_preset", UPLOAD_PRESET)
+    formData.append("folder", "resumes")
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/upload`,
+      { method: "POST", body: formData }
+    )
+
+    if (!response.ok) {
+      const err = await response.json()
+      throw new Error(err.error?.message || "Cloudinary upload failed.")
+    }
+
+    const data = await response.json()
+    return data.secure_url
+  }
+
   // Resume file handling
   const processFile = (file) => {
     if (!file) return
@@ -149,23 +173,14 @@ export default function CandidateRegistrationForm() {
       return
     }
 
-    if (file.size > 3 * 1024 * 1024) {
-      setResumeError("File size exceeds the 3MB limit.")
+    if (file.size > 10 * 1024 * 1024) {
+      setResumeError("File size exceeds the 10MB limit.")
       return
     }
 
     setResumeError("")
     setResumeFile(file)
-
-    // Convert to base64 for reliable transmission and storage
-    const reader = new FileReader()
-    reader.onload = () => {
-      setResumeBase64(reader.result)
-    }
-    reader.onerror = () => {
-      setResumeError("Failed to read the file. Please try again.")
-    }
-    reader.readAsDataURL(file)
+    setResumeCloudUrl(null) // reset previous url
   }
 
   const handleFileChange = (e) => {
@@ -194,7 +209,7 @@ export default function CandidateRegistrationForm() {
 
   const handleRemoveResume = () => {
     setResumeFile(null)
-    setResumeBase64(null)
+    setResumeCloudUrl(null)
     setResumeError("")
   }
 
@@ -227,6 +242,16 @@ export default function CandidateRegistrationForm() {
       const filteredProjects = projects.map((p) => p.trim()).filter(Boolean)
       const filteredRepos = githubRepos.map((r) => r.trim()).filter(Boolean)
 
+      // Step 1: Upload resume directly to Cloudinary
+      setIsUploading(true)
+      let cloudUrl = resumeCloudUrl
+      if (!cloudUrl) {
+        cloudUrl = await uploadToCloudinary(resumeFile)
+        setResumeCloudUrl(cloudUrl)
+      }
+      setIsUploading(false)
+
+      // Step 2: Send only the lightweight URL to the database
       const payload = {
         full_name: values.full_name.trim(),
         email: values.email.trim().toLowerCase(),
@@ -236,7 +261,7 @@ export default function CandidateRegistrationForm() {
         projects: filteredProjects,
         github_repos: filteredRepos,
         resume_filename: resumeFile.name,
-        resume_data: resumeBase64,
+        resume_data: cloudUrl,   // tiny URL, not base64
       }
 
       await submitDropyCandidateApplication(payload)
@@ -253,6 +278,7 @@ export default function CandidateRegistrationForm() {
         },
       })
     } catch (error) {
+      setIsUploading(false)
       toast({
         variant: "destructive",
         title: "Submission failed",
@@ -588,7 +614,7 @@ export default function CandidateRegistrationForm() {
                   <span className="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-50 text-indigo-600 font-bold text-xs">4</span>
                   <div className="flex-1">
                     <h2 className="text-base font-bold text-slate-900">Resume / CV <span className="text-red-500">*</span></h2>
-                    <p className="text-xs text-slate-500">Upload your latest resume in PDF format (Max 3MB).</p>
+                    <p className="text-xs text-slate-500">Upload your latest resume in PDF format (Max 10MB).</p>
                   </div>
                 </div>
 
@@ -612,7 +638,7 @@ export default function CandidateRegistrationForm() {
                       Click to upload or drag & drop
                     </p>
                     <p className="text-xs text-slate-500 mt-1">
-                      PDF files only (maximum size: 3MB)
+                      PDF files only (maximum size: 10MB)
                     </p>
                     <input
                       id="resume-input"
@@ -661,9 +687,14 @@ export default function CandidateRegistrationForm() {
                 <Button 
                   type="submit" 
                   className="w-full h-14 text-lg font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/25 transition-all hover:-translate-y-0.5 active:translate-y-0 gap-2" 
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isUploading}
                 >
-                  {isSubmitting ? (
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      Uploading Resume...
+                    </>
+                  ) : isSubmitting ? (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin" />
                       Submitting Application...
