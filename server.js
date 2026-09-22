@@ -111,6 +111,12 @@ const initDB = async () => {
     `;
     await pool.query(queryDropy);
 
+    // Safely add new columns for dropy_candidates
+    await pool.query("ALTER TABLE dropy_candidates ADD COLUMN IF NOT EXISTS gender TEXT;");
+    await pool.query("ALTER TABLE dropy_candidates ADD COLUMN IF NOT EXISTS year_of_passing TEXT;");
+    await pool.query("ALTER TABLE dropy_candidates ADD COLUMN IF NOT EXISTS degree TEXT;");
+    await pool.query("ALTER TABLE dropy_candidates ADD COLUMN IF NOT EXISTS college_name TEXT;");
+
     console.log("Database initialized successfully.");
   } catch (err) {
     console.error("Error initializing database:", err);
@@ -292,6 +298,7 @@ app.post("/api/dropy-candidates", async (req, res) => {
   try {
     const { 
       full_name, email, mobile_number, linkedin_url,
+      gender, year_of_passing, degree, college_name,
       skills, projects, github_repos,
       resume_filename, resume_data
     } = req.body;
@@ -303,11 +310,12 @@ app.post("/api/dropy-candidates", async (req, res) => {
     const insertQuery = `
       INSERT INTO dropy_candidates (
         full_name, email, mobile_number, linkedin_url,
+        gender, year_of_passing, degree, college_name,
         skills, projects, github_repos,
         resume_filename, resume_data
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
-      RETURNING id, full_name, email, mobile_number, linkedin_url, skills, projects, github_repos, resume_filename, created_at;
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) 
+      RETURNING id, full_name, email, mobile_number, linkedin_url, gender, year_of_passing, degree, college_name, skills, projects, github_repos, resume_filename, created_at;
     `;
     
     const values = [
@@ -315,6 +323,10 @@ app.post("/api/dropy-candidates", async (req, res) => {
       email,
       mobile_number,
       linkedin_url || null,
+      gender || null,
+      year_of_passing || null,
+      degree || null,
+      college_name || null,
       JSON.stringify(skills || []),
       JSON.stringify(projects || []),
       JSON.stringify(github_repos || []),

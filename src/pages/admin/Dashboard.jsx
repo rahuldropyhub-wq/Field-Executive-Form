@@ -145,6 +145,10 @@ export default function Dashboard() {
           "Full Name": c.full_name,
           "Email Address": c.email,
           "Mobile Number": c.mobile_number,
+          "Gender": c.gender || "N/A",
+          "Degree": c.degree || "N/A",
+          "College Name": c.college_name || "N/A",
+          "Year of Passing": c.year_of_passing || "N/A",
           "LinkedIn": c.linkedin_url || "N/A",
           "Technical Skills": parseList(c.skills).join(", "),
           "Live Projects": parseList(c.projects).join(", "),
@@ -260,7 +264,7 @@ export default function Dashboard() {
       doc.text(`Generated on: ${dateStr}${filterText}`, 14, 38);
 
       const tableColumn = isDropy
-        ? ["Full Name", "Email", "Mobile", "LinkedIn", "Skills", "Live Projects", "GitHub Repos", "Resume", "Date Applied"]
+        ? ["Full Name", "Email", "Mobile", "Gender", "Education", "LinkedIn", "Skills", "Live Projects", "GitHub Repos", "Resume", "Date Applied"]
         : ["Full Name", "Email", "Mobile", "Gender", "Qualification", "Experience", "DOB", "State", "District", "Docs", "Location", "Date Applied"];
       
       const tableRows = [];
@@ -271,6 +275,8 @@ export default function Dashboard() {
             c.full_name,
             c.email,
             c.mobile_number,
+            c.gender || "N/A",
+            c.degree ? `${c.degree} (${c.year_of_passing || 'N/A'}) - ${c.college_name || 'N/A'}` : "N/A",
             c.linkedin_url || "N/A",
             parseList(c.skills).join(", "),
             parseList(c.projects).join(", "),
@@ -644,7 +650,8 @@ export default function Dashboard() {
                     <th className="px-6 py-4 whitespace-nowrap">#</th>
                     <th className="px-6 py-4 whitespace-nowrap">Full Name</th>
                     <th className="px-6 py-4 whitespace-nowrap">Email</th>
-                    <th className="px-6 py-4 whitespace-nowrap">Mobile</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Mobile & Gender</th>
+                    <th className="px-6 py-4 whitespace-nowrap">Education</th>
                     <th className="px-6 py-4 whitespace-nowrap">LinkedIn</th>
                     <th className="px-6 py-4 whitespace-nowrap">Skills</th>
                     <th className="px-6 py-4 whitespace-nowrap">Live Projects</th>
@@ -672,8 +679,20 @@ export default function Dashboard() {
                         <td className="px-6 py-4 whitespace-nowrap text-slate-600">
                           <a href={`mailto:${candidate.email}`} className="hover:text-indigo-600 hover:underline">{candidate.email}</a>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
-                          {candidate.mobile_number}
+                        <td className="px-6 py-4 whitespace-nowrap text-slate-600 flex flex-col gap-1">
+                          <span>{candidate.mobile_number}</span>
+                          {candidate.gender && <span className="text-xs text-slate-400">{candidate.gender}</span>}
+                        </td>
+                        <td className="px-6 py-4 min-w-[200px]">
+                          {candidate.degree ? (
+                            <div className="flex flex-col gap-0.5">
+                              <span className="text-sm font-medium text-slate-700">{candidate.degree}</span>
+                              <span className="text-xs text-slate-500">{candidate.college_name}</span>
+                              <span className="text-xs text-slate-400">Class of {candidate.year_of_passing}</span>
+                            </div>
+                          ) : (
+                            <span className="text-slate-400 italic text-xs">N/A</span>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {candidate.linkedin_url ? (

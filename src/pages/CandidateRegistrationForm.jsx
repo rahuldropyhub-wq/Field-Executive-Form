@@ -19,12 +19,17 @@ import {
   Trash2, 
   AlertCircle,
   ArrowRight,
-  ArrowLeft
+  ArrowLeft,
+  GraduationCap,
+  Building,
+  Calendar,
+  Users
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 import { submitDropyCandidateApplication } from "@/lib/api"
 import { cn } from "@/lib/utils"
@@ -40,6 +45,10 @@ const formSchema = z.object({
     .string()
     .email({ message: "Invalid email address." }),
   mobile_number: z.string().regex(/^[6-9]\d{9}$/, { message: "Invalid 10-digit Indian mobile number." }),
+  gender: z.string({ required_error: "Please select a gender." }),
+  year_of_passing: z.string().min(4, { message: "Please enter a valid year." }),
+  degree: z.string().min(2, { message: "Please enter your degree." }),
+  college_name: z.string().min(3, { message: "Please enter your college name." }),
   linkedin_url: z
     .string()
     .trim()
@@ -81,6 +90,10 @@ export default function CandidateRegistrationForm() {
       full_name: "",
       email: "",
       mobile_number: "",
+      gender: "",
+      year_of_passing: "",
+      degree: "",
+      college_name: "",
       linkedin_url: "",
     },
   })
@@ -243,6 +256,10 @@ export default function CandidateRegistrationForm() {
         full_name: values.full_name.trim(),
         email: values.email.trim().toLowerCase(),
         mobile_number: values.mobile_number.trim(),
+        gender: values.gender,
+        year_of_passing: values.year_of_passing.trim(),
+        degree: values.degree.trim(),
+        college_name: values.college_name.trim(),
         linkedin_url: values.linkedin_url ? values.linkedin_url.trim() : null,
         skills,
         projects: filteredProjects,
@@ -379,6 +396,99 @@ export default function CandidateRegistrationForm() {
                             type="tel" 
                             placeholder="e.g. 9876543210" 
                             maxLength={10}
+                            className="pl-10 h-12 rounded-xl border-slate-200 focus-visible:ring-indigo-500" 
+                            {...field} 
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Gender */}
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-700 font-medium text-sm">Gender <span className="text-red-500">*</span></FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <div className="relative">
+                            <Users className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400 z-10" />
+                            <SelectTrigger className="pl-10 h-12 rounded-xl border-slate-200 focus:ring-indigo-500">
+                              <SelectValue placeholder="Select Gender" />
+                            </SelectTrigger>
+                          </div>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Male">Male</SelectItem>
+                          <SelectItem value="Female">Female</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Degree */}
+                <FormField
+                  control={form.control}
+                  name="degree"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-700 font-medium text-sm">Degree <span className="text-red-500">*</span></FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <GraduationCap className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
+                          <Input 
+                            placeholder="e.g. B.Tech in Computer Science" 
+                            className="pl-10 h-12 rounded-xl border-slate-200 focus-visible:ring-indigo-500" 
+                            {...field} 
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* College Name */}
+                <FormField
+                  control={form.control}
+                  name="college_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-700 font-medium text-sm">College Name <span className="text-red-500">*</span></FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Building className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
+                          <Input 
+                            placeholder="e.g. ABC Engineering College" 
+                            className="pl-10 h-12 rounded-xl border-slate-200 focus-visible:ring-indigo-500" 
+                            {...field} 
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Year of Passing */}
+                <FormField
+                  control={form.control}
+                  name="year_of_passing"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-700 font-medium text-sm">Year of Passing <span className="text-red-500">*</span></FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Calendar className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
+                          <Input 
+                            placeholder="e.g. 2024" 
                             className="pl-10 h-12 rounded-xl border-slate-200 focus-visible:ring-indigo-500" 
                             {...field} 
                           />
