@@ -72,7 +72,7 @@ export default function CandidateRegistrationForm() {
   const [isUploading, setIsUploading] = useState(false)
 
   useEffect(() => {
-    document.title = "Candidate Application | Dropy Hub"
+    document.title = "Candidate Application | DropyHub"
   }, [])
 
   const form = useForm({
@@ -260,7 +260,7 @@ export default function CandidateRegistrationForm() {
 
       navigate("/success", {
         state: {
-          role: "Candidate Application (Dropy Hub)",
+          role: "Candidate Application (DropyHub)",
           backUrl: "/candidate-register",
         },
       })
@@ -298,10 +298,9 @@ export default function CandidateRegistrationForm() {
           
           <div className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 mb-5 flex items-center justify-center">
             <img 
-              src="/dropy-logo.png" 
-              alt="Dropy Hub Logo" 
+              src="/dropyhub-logo.jpg" 
+              alt="DropyHub Logo" 
               className="h-12 sm:h-14 w-auto object-contain" 
-              onError={(e) => { e.currentTarget.src = "/dropyhub-logo.jpg" }}
             />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 text-center">Join Our Team</h1>
@@ -701,7 +700,7 @@ export default function CandidateRegistrationForm() {
       </div>
 
       <div className="text-center mt-6 text-xs text-slate-400 z-10">
-        &copy; 2026 Dropy Hub. All rights reserved.
+        &copy; 2026 DropyHub. All rights reserved.
       </div>
     </div>
   )

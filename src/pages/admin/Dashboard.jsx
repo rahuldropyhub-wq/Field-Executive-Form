@@ -239,14 +239,14 @@ export default function Dashboard() {
         doc.setFontSize(22);
         doc.setTextColor(79, 70, 229);
         doc.setFont("helvetica", "bold");
-        doc.text("Dropy Hub", 14, 22);
+        doc.text("DropyHub", 14, 22);
       }
       
       doc.setFontSize(16);
       doc.setTextColor(40, 40, 40);
       const reportTitle = isPhonePe 
         ? "PhonePe Field Executives Application Report" 
-        : (isTide ? "Tide Field Executives Application Report" : (isRecruiter ? "Recruiter Application Report" : "Dropy Hub Technical Candidates Report"));
+        : (isTide ? "Tide Field Executives Application Report" : (isRecruiter ? "Recruiter Application Report" : "DropyHub Technical Candidates Report"));
       doc.text(reportTitle, 14, 32);
       
       const dateStr = new Date().toLocaleDateString();

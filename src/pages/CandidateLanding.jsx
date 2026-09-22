@@ -14,7 +14,7 @@ export default function CandidateLanding() {
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
-    document.title = "Full Stack Developer (Fresher) | Dropy Hub Careers"
+    document.title = "Full Stack Developer (Fresher) | DropyHub Careers"
     window.scrollTo(0, 0)
   }, [])
 
@@ -278,11 +278,10 @@ export default function CandidateLanding() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/candidate")}>
             <div className="bg-white p-2 rounded-xl shadow-sm border border-slate-100">
-              <img src="/dropy-logo.png" alt="Dropy Hub" className="h-10 w-auto object-contain"
-                onError={(e) => { e.currentTarget.src = "/dropyhub-logo.jpg" }} />
+              <img src="/dropyhub-logo.jpg" alt="DropyHub" className="h-10 w-auto object-contain" />
             </div>
             <div>
-              <p className="text-lg font-bold text-slate-900 leading-none">Dropy Hub</p>
+              <p className="text-lg font-bold text-slate-900 leading-none">DropyHub</p>
               <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mt-0.5">Careers</p>
             </div>
           </div>
@@ -514,7 +513,7 @@ export default function CandidateLanding() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-full">
-              Why Dropy Hub?
+              Why DropyHub?
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold mt-4 tracking-tight">Why Join Dropyhub?</h2>
             <p className="text-slate-400 mt-2 text-base max-w-xl mx-auto">
@@ -822,12 +821,11 @@ export default function CandidateLanding() {
       <footer className="bg-slate-950 text-slate-400 py-10 border-t border-slate-800">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <img src="/dropy-logo.png" alt="Dropy Hub" className="h-8 w-auto object-contain brightness-0 invert opacity-70"
-              onError={(e) => { e.currentTarget.src = "/dropyhub-logo.jpg" }} />
-            <span className="text-sm font-semibold text-white">Dropy Hub Careers</span>
+            <img src="/dropyhub-logo.jpg" alt="DropyHub" className="h-8 w-auto object-contain brightness-0 invert opacity-70" />
+            <span className="text-sm font-semibold text-white">DropyHub Careers</span>
           </div>
           <p className="text-xs text-slate-500 text-center">
-            &copy; 2026 Dropy Hub. All rights reserved. &nbsp;·&nbsp; Full Stack Developer – Fresher Hiring Portal.
+            &copy; 2026 DropyHub. All rights reserved. &nbsp;·&nbsp; Full Stack Developer – Fresher Hiring Portal.
           </p>
         </div>
       </footer>

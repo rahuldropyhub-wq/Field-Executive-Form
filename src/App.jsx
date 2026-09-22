@@ -43,12 +43,12 @@ function App() {
         <Route path="/recruiter" element={<RecruiterLanding />} />
         <Route path="/recruiter-register" element={<RecruiterRegistrationForm />} />
 
-        {/* ─── Dropy Hub Candidate – Primary Dedicated URLs ─── */}
+        {/* ─── DropyHub Candidate – Primary Dedicated URLs ─── */}
         <Route path="/candidate" element={<CandidateLanding />} />
         <Route path="/candidate/apply" element={<CandidateRegistrationForm />} />
         <Route path="/candidate/register" element={<CandidateRegistrationForm />} />
 
-        {/* Dropy Hub Candidate – Alias Routes */}
+        {/* DropyHub Candidate – Alias Routes */}
         <Route path="/careers" element={<CandidateLanding />} />
         <Route path="/dropy" element={<CandidateLanding />} />
         <Route path="/jobs" element={<CandidateLanding />} />
