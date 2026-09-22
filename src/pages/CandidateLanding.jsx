@@ -1,20 +1,24 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import {
   Briefcase, Code2, Rocket, GitBranch, CheckCircle2, ArrowRight,
   Sparkles, Award, Zap, Users, HelpCircle, MapPin, Layers,
   Terminal, ChevronRight, GraduationCap, Star, Database,
-  MonitorSmartphone, Wrench, Clock, Shield
+  MonitorSmartphone, Wrench, Clock, Shield,
+  AlertTriangle, FileCheck, CreditCard, Building2, Banknote, IndianRupee
 } from "lucide-react"
 
 export default function CandidateLanding() {
   const navigate = useNavigate()
+  const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
     document.title = "Full Stack Developer (Fresher) | Dropy Hub Careers"
     window.scrollTo(0, 0)
   }, [])
+
+  const handleApplyClick = () => setShowModal(true)
 
   const responsibilities = [
     "Develop and maintain full-stack web applications across frontend and backend environments.",
@@ -141,6 +145,134 @@ export default function CandidateLanding() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans selection:bg-indigo-600 selection:text-white">
 
+      {/* ─── Guidelines Modal ─── */}
+      {showModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ backgroundColor: "rgba(15,23,42,0.75)", backdropFilter: "blur(6px)" }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false) }}
+        >
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-300">
+
+            {/* Modal Header */}
+            <div className="sticky top-0 z-10 bg-gradient-to-r from-red-600 to-rose-600 rounded-t-3xl px-6 py-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                    <AlertTriangle className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-white font-extrabold text-base leading-tight">Read Before You Apply</p>
+                    <p className="text-red-200 text-xs">DropyHub Application Guidelines</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors text-lg font-bold"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+
+            <div className="px-6 py-6 space-y-4">
+
+              {/* Never Pay Banner */}
+              <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-4 flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-extrabold text-red-700 text-sm">DropyHub will NEVER ask you to pay money</p>
+                  <p className="text-red-600 text-xs mt-1 leading-relaxed">
+                    No registration fee · No application fee · No placement fee · No EMI deductions.
+                    If anyone claims to be from DropyHub and asks for payment — <strong>do not pay and report it.</strong>
+                  </p>
+                </div>
+              </div>
+
+              {/* Guidelines List */}
+              <div className="space-y-3">
+
+                <div className="flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                    <IndianRupee className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">100% Free Platform</p>
+                    <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">DropyHub is completely free for students. No hidden charges of any kind.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 bg-indigo-50 border border-indigo-200 rounded-2xl p-4">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0">
+                    <Building2 className="w-4 h-4 text-indigo-600" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">DropyHub Payroll Onboarding</p>
+                    <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">Selected candidates are onboarded under DropyHub payroll for full transparency. We do not collect placement fees or EMIs under any circumstance.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-2xl p-4">
+                  <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
+                    <Briefcase className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">Multiple Company Opportunities</p>
+                    <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">Based on your profile and skills, you may be considered for openings across multiple hiring partner companies.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 bg-violet-50 border border-violet-200 rounded-2xl p-4">
+                  <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center shrink-0">
+                    <FileCheck className="w-4 h-4 text-violet-600" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">Assessment & Assignment Process</p>
+                    <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">After shortlisting, you will be notified via email. You must complete the given assignment and the DropyHub payroll onboarding process.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4">
+                  <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                    <CreditCard className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">Required Documents</p>
+                    <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">Keep your <strong>PAN Card</strong> and <strong>Aadhaar Card</strong> ready for employment and payroll verification during onboarding.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                  <div className="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center shrink-0">
+                    <Banknote className="w-4 h-4 text-slate-600" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">Bank Account Facility (Optional)</p>
+                    <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">DropyHub may provide a bank-account-opening facility as part of onboarding. This is entirely optional and subject to your consent.</p>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Proceed Button */}
+              <div className="pt-2">
+                <button
+                  onClick={() => { setShowModal(false); navigate("/candidate/apply") }}
+                  className="w-full h-14 rounded-2xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white font-extrabold text-base flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 transition-all hover:-translate-y-0.5 active:scale-95"
+                >
+                  I Understand — Proceed to Apply <ArrowRight className="w-5 h-5" />
+                </button>
+                <p className="text-center text-xs text-slate-400 mt-3">
+                  By proceeding, you confirm you have read and understood the DropyHub Application Guidelines.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
+
       {/* ─── Navbar ─── */}
       <nav className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3 flex items-center justify-between">
@@ -154,7 +286,7 @@ export default function CandidateLanding() {
               <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mt-0.5">Careers</p>
             </div>
           </div>
-          <Button onClick={() => navigate("/candidate/apply")}
+          <Button onClick={handleApplyClick}
             className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-6 h-11 font-semibold shadow-md shadow-indigo-600/20 transition-all hover:-translate-y-0.5 text-sm">
             Apply Now <ArrowRight className="w-4 h-4 ml-1.5" />
           </Button>
@@ -224,7 +356,7 @@ export default function CandidateLanding() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <Button onClick={() => navigate("/candidate/apply")}
+                <Button onClick={handleApplyClick}
                   className="h-12 px-8 text-sm font-bold rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white shadow-xl shadow-indigo-500/30 transition-all hover:-translate-y-1">
                   Apply Now <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
@@ -254,7 +386,7 @@ export default function CandidateLanding() {
                     <span className="text-white font-semibold text-right">{r.value}</span>
                   </div>
                 ))}
-                <Button onClick={() => navigate("/candidate/apply")}
+                <Button onClick={handleApplyClick}
                   className="w-full mt-4 h-11 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-500 text-white text-sm">
                   Fill Application Form →
                 </Button>
@@ -448,6 +580,150 @@ export default function CandidateLanding() {
         </div>
       </section>
 
+      {/* ─── Application Guidelines ─── */}
+      <section className="py-20 bg-white border-t border-slate-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Section Header */}
+          <div className="text-center mb-14">
+            <span className="inline-flex items-center gap-2 text-xs font-bold text-rose-600 uppercase tracking-widest bg-rose-50 border border-rose-200 px-4 py-1.5 rounded-full">
+              <AlertTriangle className="w-3.5 h-3.5" /> Important — Read Before Applying
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-4 tracking-tight">
+              DropyHub Student Job Application Guidelines
+            </h2>
+            <p className="text-slate-500 mt-3 text-base max-w-2xl mx-auto">
+              Please read these guidelines carefully before submitting your application.
+            </p>
+          </div>
+
+          {/* ⚠️ Never Pay Warning Banner */}
+          <div className="mb-10 bg-gradient-to-r from-red-600 to-rose-600 rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-red-600/25 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10 pointer-events-none">
+              <svg className="w-full h-full"><defs><pattern id="warn-grid" width="30" height="30" patternUnits="userSpaceOnUse">
+                <path d="M0 30L30 0H15L0 15M30 30V15L15 30" stroke="white" strokeWidth="0.6" fill="none"/>
+              </pattern></defs><rect width="100%" height="100%" fill="url(#warn-grid)"/></svg>
+            </div>
+            <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6">
+              <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-center sm:text-left">
+                <p className="text-lg sm:text-xl font-extrabold tracking-tight mb-1">DropyHub will NEVER ask you to pay money</p>
+                <p className="text-red-100 text-sm leading-relaxed">
+                  We do not charge any <strong className="text-white">registration fee, application fee, placement fee, or EMI</strong> from candidates — ever. Your talent and skills should be evaluated, not your ability to pay.
+                </p>
+              </div>
+              <div className="shrink-0 bg-white/20 border border-white/30 rounded-2xl px-6 py-3 text-center">
+                <p className="text-2xl font-black">₹0</p>
+                <p className="text-xs font-bold text-red-100 uppercase tracking-wider">Always Free</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Guidelines Grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+            {/* 1 - 100% Free */}
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 flex flex-col gap-3">
+              <div className="w-11 h-11 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <IndianRupee className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-1">Guideline 1</p>
+                <h3 className="text-base font-extrabold text-slate-900 mb-2">100% Free Platform</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  DropyHub is completely free for students and job seekers. No registration fee, no application fee, no placement fee, no hidden charges — whatsoever.
+                </p>
+              </div>
+            </div>
+
+            {/* 2 - DropyHub Payroll */}
+            <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-6 flex flex-col gap-3">
+              <div className="w-11 h-11 rounded-xl bg-indigo-100 flex items-center justify-center">
+                <Building2 className="w-5 h-5 text-indigo-600" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-1">Guideline 2</p>
+                <h3 className="text-base font-extrabold text-slate-900 mb-2">Why DropyHub Payroll?</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Candidates are onboarded under the <strong>DropyHub payroll</strong> for full transparency. We do not collect placement fees or EMIs. If placed through any other arrangement with salary deductions, DropyHub is not responsible.
+                </p>
+              </div>
+            </div>
+
+            {/* 3 - Multiple Companies */}
+            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 flex flex-col gap-3">
+              <div className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center">
+                <Briefcase className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1">Guideline 3</p>
+                <h3 className="text-base font-extrabold text-slate-900 mb-2">Multiple Company Opportunities</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  DropyHub works with multiple hiring partners. Based on your profile, skills, and eligibility, your profile may be considered for suitable openings across different companies.
+                </p>
+              </div>
+            </div>
+
+            {/* 4 - Application Process */}
+            <div className="bg-violet-50 border border-violet-200 rounded-2xl p-6 flex flex-col gap-3">
+              <div className="w-11 h-11 rounded-xl bg-violet-100 flex items-center justify-center">
+                <FileCheck className="w-5 h-5 text-violet-600" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-violet-600 uppercase tracking-widest mb-1">Guideline 4</p>
+                <h3 className="text-base font-extrabold text-slate-900 mb-2">Application & Assessment Process</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Once shortlisted, next steps are communicated via your registered email. You may receive an assignment to complete. Candidates must finish both the <strong>assessment process</strong> and the DropyHub <strong>payroll onboarding</strong>.
+                </p>
+              </div>
+            </div>
+
+            {/* 5 - Documents */}
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 flex flex-col gap-3">
+              <div className="w-11 h-11 rounded-xl bg-amber-100 flex items-center justify-center">
+                <CreditCard className="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-1">Guideline 5</p>
+                <h3 className="text-base font-extrabold text-slate-900 mb-2">Required Documents</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Keep your <strong>PAN Card</strong> and <strong>Aadhaar Card</strong> details ready for the employment and payroll verification process during onboarding.
+                </p>
+              </div>
+            </div>
+
+            {/* 6 - Bank Account */}
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex flex-col gap-3">
+              <div className="w-11 h-11 rounded-xl bg-slate-200 flex items-center justify-center">
+                <Banknote className="w-5 h-5 text-slate-600" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Guideline 6</p>
+                <h3 className="text-base font-extrabold text-slate-900 mb-2">Bank Account Facility</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  DropyHub may provide a <strong>bank-account-opening facility</strong> as part of onboarding. This is completely <strong>optional</strong> and subject to the candidate's consent.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Bottom Assurance Strip */}
+          <div className="mt-10 bg-slate-900 rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-center gap-4 text-white">
+            <Shield className="w-8 h-8 text-emerald-400 shrink-0" />
+            <p className="text-sm text-slate-300 leading-relaxed text-center sm:text-left">
+              <strong className="text-white">Official DropyHub Commitment:</strong> We will never ask candidates to pay money in exchange for a job opportunity. If anyone claiming to be from DropyHub asks you for payment, please do not pay and report it immediately.
+            </p>
+            <div className="shrink-0">
+              <span className="bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl whitespace-nowrap">✓ 100% Verified</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       {/* ─── Hiring Process ─── */}
       <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -479,7 +755,7 @@ export default function CandidateLanding() {
           </div>
 
           <div className="mt-12 text-center">
-            <Button onClick={() => navigate("/candidate/apply")}
+            <Button onClick={handleApplyClick}
               className="h-13 px-9 text-sm font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-600/20 transition-all hover:-translate-y-1">
               Start Step 01 — Submit Application <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
@@ -534,7 +810,7 @@ export default function CandidateLanding() {
           <p className="text-indigo-100 text-base max-w-xl mx-auto leading-relaxed">
             Applications are reviewed immediately. Showcase your GitHub, your projects, and your skills — and take the next big step.
           </p>
-          <Button onClick={() => navigate("/candidate/apply")}
+          <Button onClick={handleApplyClick}
             className="h-14 px-10 text-base font-bold rounded-xl bg-white text-indigo-700 hover:bg-slate-100 shadow-2xl transition-all hover:-translate-y-1">
             Apply for Full Stack Developer (Fresher) <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
