@@ -13,6 +13,41 @@ const parseList = (val) => {
   try { return JSON.parse(val || "[]"); } catch { return []; }
 };
 
+// Opens Base64 PDF in a new tab using a Blob URL (Chrome blocks data: URLs in new tabs)
+const openPdfBlob = (base64DataUrl) => {
+  try {
+    // base64DataUrl is like "data:application/pdf;base64,XXXX"
+    const base64 = base64DataUrl.split(",")[1]
+    const binary = atob(base64)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+    const blob = new Blob([bytes], { type: "application/pdf" })
+    const blobUrl = URL.createObjectURL(blob)
+    window.open(blobUrl, "_blank")
+  } catch (e) {
+    alert("Could not open PDF. Please try downloading instead.")
+  }
+}
+
+// Downloads Base64 PDF as a file
+const downloadPdfBlob = (base64DataUrl, filename) => {
+  try {
+    const base64 = base64DataUrl.split(",")[1]
+    const binary = atob(base64)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+    const blob = new Blob([bytes], { type: "application/pdf" })
+    const blobUrl = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = blobUrl
+    a.download = filename || "resume.pdf"
+    a.click()
+    URL.revokeObjectURL(blobUrl)
+  } catch (e) {
+    alert("Could not download PDF. Please try again.")
+  }
+}
+
 export default function Dashboard() {
   const [phonepeCandidates, setPhonepeCandidates] = useState([]);
   const [tideCandidates, setTideCandidates] = useState([]);
@@ -679,38 +714,68 @@ export default function Dashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {(() => {
-                            // resume_data may be a JSON string {viewUrl, downloadUrl} or a plain URL (legacy)
-                            let viewUrl = null, downloadUrl = null
+                            // resume_data: Base64 string OR legacy JSON {viewUrl, downloadUrl}
+                            let base64Data = null, legacyViewUrl = null, legacyDownloadUrl = null
                             if (candidate.resume_data) {
                               try {
                                 const parsed = JSON.parse(candidate.resume_data)
-                                viewUrl = parsed.viewUrl
-                                downloadUrl = parsed.downloadUrl
+                                // Legacy Cloudinary JSON format
+                                legacyViewUrl = parsed.viewUrl
+                                legacyDownloadUrl = parsed.downloadUrl
                               } catch {
-                                // Legacy: plain URL stored directly
-                                viewUrl = candidate.resume_data
-                                downloadUrl = candidate.resume_data
+                                // New format: Base64 data URI
+                                if (candidate.resume_data.startsWith("data:")) {
+                                  base64Data = candidate.resume_data
+                                } else {
+                                  // Plain URL (very old records)
+                                  legacyViewUrl = candidate.resume_data
+                                  legacyDownloadUrl = candidate.resume_data
+                                }
                               }
                             }
-                            return viewUrl ? (
-                              <div className="flex gap-2">
-                                <a 
-                                  href={viewUrl} 
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-blue-200 shadow-sm"
-                                >
-                                  <ExternalLink className="h-3 w-3" /> View
-                                </a>
-                                <a 
-                                  href={downloadUrl} 
-                                  download={candidate.resume_filename || `resume-${candidate.full_name}.pdf`}
-                                  className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-emerald-200 shadow-sm"
-                                >
-                                  <Download className="h-3 w-3" /> Download
-                                </a>
-                              </div>
-                            ) : candidate.resume_filename ? (
+
+                            if (base64Data) {
+                              return (
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => openPdfBlob(base64Data)}
+                                    className="bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-blue-200 shadow-sm"
+                                  >
+                                    <ExternalLink className="h-3 w-3" /> View
+                                  </button>
+                                  <button
+                                    onClick={() => downloadPdfBlob(base64Data, candidate.resume_filename || `resume-${candidate.full_name}.pdf`)}
+                                    className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-emerald-200 shadow-sm"
+                                  >
+                                    <Download className="h-3 w-3" /> Download
+                                  </button>
+                                </div>
+                              )
+                            }
+
+                            if (legacyViewUrl) {
+                              return (
+                                <div className="flex gap-2">
+                                  <a
+                                    href={legacyViewUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-blue-200 shadow-sm"
+                                  >
+                                    <ExternalLink className="h-3 w-3" /> View
+                                  </a>
+                                  <a
+                                    href={legacyDownloadUrl}
+                                    download={candidate.resume_filename || `resume-${candidate.full_name}.pdf`}
+                                    className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-emerald-200 shadow-sm"
+                                  >
+                                    <Download className="h-3 w-3" /> Download
+                                  </a>
+                                </div>
+                              )
+                            }
+
+                            return candidate.resume_filename ? (
                               <span className="bg-amber-50 text-amber-600 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 w-fit">
                                 <FileText className="h-3 w-3" /> Old Record
                               </span>
@@ -894,21 +959,40 @@ export default function Dashboard() {
                           <p className="text-xs text-slate-400 font-medium mb-1">Resume</p>
                           {candidate.resume_data ? (
                             <div className="flex gap-2">
-                              <a
-                                href={candidate.resume_data}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-blue-200"
-                              >
-                                <ExternalLink className="h-3 w-3" /> View
-                              </a>
-                              <a
-                                href={candidate.resume_data}
-                                download={candidate.resume_filename || `resume-${candidate.full_name}.pdf`}
-                                className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-emerald-200"
-                              >
-                                <Download className="h-3 w-3" /> Download
-                              </a>
+                              {candidate.resume_data.startsWith("data:") ? (
+                                <>
+                                  <button
+                                    onClick={() => openPdfBlob(candidate.resume_data)}
+                                    className="bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-blue-200"
+                                  >
+                                    <ExternalLink className="h-3 w-3" /> View
+                                  </button>
+                                  <button
+                                    onClick={() => downloadPdfBlob(candidate.resume_data, candidate.resume_filename || `resume-${candidate.full_name}.pdf`)}
+                                    className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-emerald-200"
+                                  >
+                                    <Download className="h-3 w-3" /> Download
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <a
+                                    href={candidate.resume_data}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="bg-blue-50 text-blue-700 hover:bg-blue-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-blue-200"
+                                  >
+                                    <ExternalLink className="h-3 w-3" /> View
+                                  </a>
+                                  <a
+                                    href={candidate.resume_data}
+                                    download={candidate.resume_filename || `resume-${candidate.full_name}.pdf`}
+                                    className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors border border-emerald-200"
+                                  >
+                                    <Download className="h-3 w-3" /> Download
+                                  </a>
+                                </>
+                              )}
                             </div>
                           ) : (
                             <span className="text-slate-400 italic text-xs">
