@@ -160,8 +160,8 @@ export default function CandidateRegistrationForm() {
       return
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      setResumeError("File size exceeds the 10MB limit.")
+    if (file.size > 4 * 1024 * 1024) {
+      setResumeError("File size exceeds the 4MB limit.")
       return
     }
 
