@@ -682,13 +682,13 @@ export default function Dashboard() {
                             </a>
                           ) : <span className="text-slate-400 italic text-xs">N/A</span>}
                         </td>
-                        <td className="px-6 py-4 max-w-[200px]">
-                          <div className="flex flex-wrap gap-1">
-                            {parseList(candidate.skills).slice(0, 4).map((s, i) => (
-                              <span key={i} className="bg-indigo-100 text-indigo-700 text-[10px] font-semibold px-2 py-0.5 rounded-full">{s}</span>
+                        <td className="px-6 py-4 min-w-[280px]">
+                          <div className="flex flex-wrap flex-row gap-1">
+                            {parseList(candidate.skills).slice(0, 6).map((s, i) => (
+                              <span key={i} className="bg-indigo-100 text-indigo-700 text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap">{s}</span>
                             ))}
-                            {parseList(candidate.skills).length > 4 && (
-                              <span className="bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-full">+{parseList(candidate.skills).length - 4}</span>
+                            {parseList(candidate.skills).length > 6 && (
+                              <span className="bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-full">+{parseList(candidate.skills).length - 6}</span>
                             )}
                           </div>
                         </td>
