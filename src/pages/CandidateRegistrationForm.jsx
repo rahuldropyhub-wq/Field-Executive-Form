@@ -23,7 +23,8 @@ import {
   GraduationCap,
   Building,
   Calendar,
-  Users
+  Users,
+  MapPin
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -46,6 +47,7 @@ const formSchema = z.object({
     .email({ message: "Invalid email address." }),
   mobile_number: z.string().regex(/^[6-9]\d{9}$/, { message: "Invalid 10-digit Indian mobile number." }),
   gender: z.string({ required_error: "Please select a gender." }),
+  address: z.string().min(10, { message: "Please enter your full address (min 10 characters)." }),
   year_of_passing: z.string().min(4, { message: "Please enter a valid year." }),
   degree: z.string().min(2, { message: "Please enter your degree." }),
   college_name: z.string().min(3, { message: "Please enter your college name." }),
@@ -91,6 +93,7 @@ export default function CandidateRegistrationForm() {
       email: "",
       mobile_number: "",
       gender: "",
+      address: "",
       year_of_passing: "",
       degree: "",
       college_name: "",
@@ -257,6 +260,7 @@ export default function CandidateRegistrationForm() {
         email: values.email.trim().toLowerCase(),
         mobile_number: values.mobile_number.trim(),
         gender: values.gender,
+        address: values.address.trim(),
         year_of_passing: values.year_of_passing.trim(),
         degree: values.degree.trim(),
         college_name: values.college_name.trim(),
@@ -428,6 +432,29 @@ export default function CandidateRegistrationForm() {
                           <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Address */}
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-700 font-medium text-sm">Address <span className="text-red-500">*</span></FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <MapPin className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
+                          <textarea
+                            placeholder="e.g. Flat 12, Sunshine Apartments, MG Road, Hyderabad, Telangana - 500001"
+                            rows={3}
+                            className="w-full pl-10 pr-4 pt-3 pb-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none bg-white transition-all"
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

@@ -122,6 +122,7 @@ export default function Dashboard() {
       "Email Address": c.email,
       "Mobile Number": c.mobile_number,
       "Gender": c.gender || "N/A",
+      "Address": c.address || "N/A",
       "Degree": c.degree || "N/A",
       "College Name": c.college_name || "N/A",
       "Year of Passing": c.year_of_passing || "N/A",
@@ -172,7 +173,7 @@ export default function Dashboard() {
       }
       doc.text(`Generated on: ${dateStr}${filterText}`, 14, 38);
 
-      const tableColumn = ["Full Name", "Email", "Mobile", "Gender", "Education", "LinkedIn", "Skills", "Live Projects", "GitHub Repos", "Resume", "Date Applied"];
+      const tableColumn = ["Full Name", "Email", "Mobile", "Gender", "Address", "Education", "LinkedIn", "Skills", "Live Projects", "GitHub Repos", "Resume", "Date Applied"];
       const tableRows = [];
 
       filteredCandidates.forEach(c => {
@@ -181,6 +182,7 @@ export default function Dashboard() {
           c.email,
           c.mobile_number,
           c.gender || "N/A",
+          c.address || "N/A",
           c.degree ? `${c.degree} (${c.year_of_passing || 'N/A'}) - ${c.college_name || 'N/A'}` : "N/A",
           c.linkedin_url || "N/A",
           parseList(c.skills).join(", "),
@@ -431,6 +433,7 @@ export default function Dashboard() {
                   <th className="px-6 py-4 whitespace-nowrap">Full Name</th>
                   <th className="px-6 py-4 whitespace-nowrap">Email</th>
                   <th className="px-6 py-4 whitespace-nowrap">Mobile & Gender</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Address</th>
                   <th className="px-6 py-4 whitespace-nowrap">Education</th>
                   <th className="px-6 py-4 whitespace-nowrap">LinkedIn</th>
                   <th className="px-6 py-4 whitespace-nowrap">Skills</th>
@@ -462,6 +465,9 @@ export default function Dashboard() {
                       <td className="px-6 py-4 whitespace-nowrap text-slate-600 flex flex-col gap-1">
                         <span>{candidate.mobile_number}</span>
                         {candidate.gender && <span className="text-xs text-slate-400">{candidate.gender}</span>}
+                      </td>
+                      <td className="px-6 py-4 min-w-[200px] text-slate-600">
+                        <span className="text-sm truncate block max-w-[200px]" title={candidate.address}>{candidate.address || "N/A"}</span>
                       </td>
                       <td className="px-6 py-4 min-w-[200px]">
                         {candidate.degree ? (
@@ -618,6 +624,15 @@ export default function Dashboard() {
                         <p className="text-slate-700">{candidate.mobile_number}</p>
                       </div>
                     </div>
+                    {candidate.address && (
+                      <div className="flex items-start text-slate-600">
+                        <MapPin className="h-4 w-4 mr-2 text-slate-400 mt-0.5" />
+                        <div>
+                          <p className="text-xs text-slate-400 font-medium">Address</p>
+                          <p className="text-slate-700">{candidate.address}</p>
+                        </div>
+                      </div>
+                    )}
                     {candidate.linkedin_url && (
                       <div className="flex items-start text-slate-600">
                         <ExternalLink className="h-4 w-4 mr-2 text-indigo-400 mt-0.5" />
