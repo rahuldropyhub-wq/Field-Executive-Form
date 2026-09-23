@@ -44,13 +44,13 @@ export default function QRCodeGenerator() {
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center border border-slate-100">
         <h1 className="text-2xl font-bold text-slate-900 mb-2">Scan to Apply</h1>
         <p className="text-slate-600 mb-8">
-          Candidates can scan this QR code to access the PhonePe Field Executive registration form directly.
+          Candidates can scan this QR code to access the DropyHub candidate registration form directly.
         </p>
-        
+
         <div className="flex justify-center mb-8 p-4 bg-white border border-slate-100 rounded-xl shadow-inner mx-auto w-64 h-64 items-center">
-          <QRCodeSVG 
+          <QRCodeSVG
             id="registration-qr"
-            value={url} 
+            value={url}
             size={200}
             level="H"
             includeMargin={true}
